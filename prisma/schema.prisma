@@ -1,0 +1,12 @@
+// Baraha Hotel — Prisma schema
+// Only the generator and datasource for now; data models will be added
+// together with the first features.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
