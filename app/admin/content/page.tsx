@@ -12,7 +12,7 @@ const SECTIONS = [
   {
     title: "Pages",
     description:
-      "Edit About, Amenities, and other page content — title, meta fields, and structured body blocks.",
+      "Edit About and other page content — title, meta fields, and structured body blocks.",
     href: "/admin/content/pages",
     icon: FileText,
   },

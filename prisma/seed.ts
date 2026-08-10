@@ -153,19 +153,6 @@ const pageSeeds = [
       { type: "image", text: "", url: "/images/rooms/standard-1.jpg", alt: "The Baraha Hotel garden" },
     ],
   },
-  {
-    slug: "amenities",
-    title: "Amenities",
-    metaTitle: "Amenities at Baraha Hotel and Lodge",
-    metaDescription: "Rooms, dining, WiFi, and more — see what's included with your stay at Baraha Hotel and Lodge.",
-    blocks: [
-      { type: "heading", text: "Comforts of home, views of the hills", url: "", alt: "" },
-      { type: "paragraph", text: "Every room comes with free WiFi, hot water, and a writing desk. Deluxe rooms add private balconies; our family suites include a living room and kitchenette.", url: "", alt: "" },
-      { type: "heading", text: "Dining", url: "", alt: "" },
-      { type: "paragraph", text: "Our kitchen serves dal bhat, Nepali breakfast sets, and Dhankuta specialities like gundruk soup and mutton sekuwa — plus fresh local oranges in season.", url: "", alt: "" },
-      { type: "image", text: "", url: "/images/food/dal-bhat.jpg", alt: "Dal bhat at the hotel restaurant" },
-    ],
-  },
 ];
 
 const gallerySeeds = [
@@ -314,7 +301,7 @@ async function main() {
     });
   }
 
-  // 4b. Pages (About, Amenities) — upsert by unique slug
+  // 4b. Pages (About) — upsert by unique slug
   for (const seed of pageSeeds) {
     const { blocks, ...data } = seed;
     await prisma.page.upsert({

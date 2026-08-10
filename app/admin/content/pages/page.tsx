@@ -26,7 +26,7 @@ export default async function AdminContentPagesPage() {
           </Link>
           <h1 className="mt-2 font-display text-2xl text-charcoal sm:text-3xl">Pages</h1>
           <p className="mt-1 text-sm text-charcoal/60">
-            {pages.length} page{pages.length === 1 ? "" : "s"} — About, Amenities, and more
+            {pages.length} page{pages.length === 1 ? "" : "s"} — About and more
           </p>
         </div>
         <Link

@@ -13,7 +13,6 @@ export function revalidatePublicSite() {
     "/",
     "/rooms",
     "/rooms/[slug]",
-    "/amenities",
     "/about",
     "/gallery",
     "/dining",

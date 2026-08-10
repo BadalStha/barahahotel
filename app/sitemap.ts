@@ -24,7 +24,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${base}/` },
     { url: `${base}/rooms` },
-    { url: `${base}/amenities` },
     { url: `${base}/about` },
     { url: `${base}/gallery` },
     { url: `${base}/dining` },
