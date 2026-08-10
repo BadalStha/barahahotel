@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import {
   ArrowLeft,
   CalendarDays,
+  FileText,
   MapPin,
   Phone,
+  Plus,
   User,
 } from "lucide-react";
 
@@ -30,6 +32,7 @@ export default async function BookingDetailPage({
     include: {
       guest: true,
       room: { include: { roomType: true } },
+      invoice: true,
       foodOrders: {
         orderBy: { orderedAt: "desc" },
         include: {
@@ -59,14 +62,32 @@ export default async function BookingDetailPage({
           <ArrowLeft className="size-4" />
           Bookings
         </Link>
-        <div className="mt-2 flex flex-wrap items-center gap-3">
-          <h1 className="font-mono text-2xl text-charcoal sm:text-3xl">
-            {booking.bookingCode}
-          </h1>
-          <StatusBadge status={booking.status} />
-          <span className="rounded-full bg-charcoal/5 px-2.5 py-0.5 text-xs font-medium text-charcoal/60">
-            {SOURCE_LABELS[booking.source]}
-          </span>
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="font-mono text-2xl text-charcoal sm:text-3xl">
+              {booking.bookingCode}
+            </h1>
+            <StatusBadge status={booking.status} />
+            <span className="rounded-full bg-charcoal/5 px-2.5 py-0.5 text-xs font-medium text-charcoal/60">
+              {SOURCE_LABELS[booking.source]}
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={`/admin/bookings/${booking.id}/food-order`}
+              className="inline-flex h-9 items-center gap-2 rounded-lg bg-pine px-3 text-sm font-medium text-stone transition-colors hover:bg-pine/90"
+            >
+              <Plus className="size-4" />
+              Add food order
+            </Link>
+            <Link
+              href={`/admin/bookings/${booking.id}/invoice`}
+              className="inline-flex h-9 items-center gap-2 rounded-lg border border-charcoal/15 px-3 text-sm font-medium text-charcoal/70 transition-colors hover:bg-charcoal/5"
+            >
+              <FileText className="size-4" />
+              Invoice
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -175,11 +196,65 @@ export default async function BookingDetailPage({
         </div>
       </section>
 
+      {/* Billing */}
+      <section className="rounded-xl border border-charcoal/10 bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-charcoal/50">
+              Billing
+            </h2>
+            {booking.invoice ? (
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <span className="font-display text-xl text-charcoal">
+                  {formatNPR(Number(booking.invoice.grandTotal))}
+                </span>
+                <span
+                  className={
+                    booking.invoice.paymentStatus === "PAID"
+                      ? "rounded-full bg-pine/10 px-2.5 py-0.5 text-xs font-semibold text-pine"
+                      : booking.invoice.paymentStatus === "PARTIAL"
+                        ? "rounded-full bg-saffron/20 px-2.5 py-0.5 text-xs font-semibold text-charcoal"
+                        : "rounded-full bg-terracotta/10 px-2.5 py-0.5 text-xs font-semibold text-terracotta"
+                  }
+                >
+                  {booking.invoice.paymentStatus.replace("_", " ").toLowerCase()}
+                </span>
+                {booking.invoice.paymentMethod ? (
+                  <span className="text-xs text-charcoal/50">
+                    via {booking.invoice.paymentMethod}
+                  </span>
+                ) : null}
+              </div>
+            ) : (
+              <p className="mt-1 text-sm text-charcoal/50">
+                No invoice generated yet.
+              </p>
+            )}
+          </div>
+          <Link
+            href={`/admin/bookings/${booking.id}/invoice`}
+            className="inline-flex h-9 items-center gap-2 rounded-lg border border-pine/40 px-3 text-sm font-medium text-pine transition-colors hover:bg-pine/10"
+          >
+            <FileText className="size-4" />
+            {booking.invoice ? "View invoice" : "Generate invoice"}
+          </Link>
+        </div>
+      </section>
+
       {/* Food orders */}
       <section className="rounded-xl border border-charcoal/10 bg-white p-5 shadow-sm">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-charcoal/50">
-          Food orders ({booking.foodOrders.length})
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-charcoal/50">
+            Food orders ({booking.foodOrders.length})
+          </h2>
+          <Link
+            href={`/admin/bookings/${booking.id}/food-order`}
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-charcoal/15 px-3 text-xs font-medium text-charcoal/70 transition-colors hover:bg-charcoal/5"
+          >
+            <Plus className="size-3.5" />
+            Add order
+          </Link>
+        </div>
         {booking.foodOrders.length === 0 ? (
           <p className="mt-3 text-sm text-charcoal/50">
             No food orders for this booking yet.

@@ -7,10 +7,15 @@ import { redirect } from "next/navigation";
 import { BookingConflictError, createBookingRecord } from "@/lib/booking";
 import { parseDateOnly } from "@/lib/dates";
 import { db } from "@/lib/db";
+import { generateInvoice } from "@/lib/invoice";
 import {
   adminBookingSchema,
   BOOKING_TRANSITIONS,
 } from "@/lib/validators/booking";
+import {
+  foodOrderInputSchema,
+  invoiceSettingsSchema,
+} from "@/lib/validators/food";
 
 export type ActionResult = { error?: string };
 
@@ -83,6 +88,105 @@ export async function updateBookingStatusAction(
 
   revalidatePath("/admin/bookings");
   revalidatePath(`/admin/bookings/${id}`);
+  revalidatePath("/admin/dashboard");
+  return {};
+}
+
+// ── Food orders ──────────────────────────────────────────────────
+
+export async function createFoodOrderAction(
+  bookingId: string,
+  input: unknown,
+): Promise<ActionResult> {
+  const parsed = foodOrderInputSchema.safeParse(input);
+  if (!parsed.success) {
+    return { error: "Add at least one item to the order." };
+  }
+
+  const booking = await db.booking.findUnique({
+    where: { id: bookingId },
+    select: { id: true, bookingCode: true },
+  });
+  if (!booking) return { error: "Booking not found." };
+
+  const itemIds = parsed.data.items.map((i) => i.foodMenuItemId);
+  const menuItems = await db.foodMenuItem.findMany({
+    where: { id: { in: itemIds }, isAvailable: true },
+    select: { id: true, price: true },
+  });
+  if (menuItems.length !== itemIds.length) {
+    return { error: "One of the chosen items is unavailable or no longer exists." };
+  }
+  const priceById = new Map(menuItems.map((m) => [m.id, m.price]));
+
+  // priceAtOrder snapshots today's menu price, so later menu price changes
+  // never retroactively change past bills.
+  await db.foodOrder.create({
+    data: {
+      bookingId,
+      notes: parsed.data.notes || null,
+      items: {
+        create: parsed.data.items.map((item) => ({
+          foodMenuItemId: item.foodMenuItemId,
+          quantity: item.quantity,
+          priceAtOrder: priceById.get(item.foodMenuItemId)!,
+        })),
+      },
+    },
+  });
+
+  // Keep the booking's invoice in sync with the new order.
+  await generateInvoice(bookingId);
+
+  revalidatePath("/admin/bookings");
+  revalidatePath(`/admin/bookings/${bookingId}`);
+  revalidatePath(`/admin/bookings/${bookingId}/invoice`);
+  revalidatePath("/admin/dashboard");
+  redirect(`/admin/bookings/${bookingId}`);
+}
+
+// ── Invoicing ────────────────────────────────────────────────────
+
+export async function updateInvoiceAction(
+  bookingId: string,
+  input: unknown,
+): Promise<ActionResult> {
+  const parsed = invoiceSettingsSchema.safeParse(input);
+  if (!parsed.success) {
+    return { error: "Please fix the highlighted fields." };
+  }
+
+  const booking = await db.booking.findUnique({
+    where: { id: bookingId },
+    select: { id: true },
+  });
+  if (!booking) return { error: "Booking not found." };
+
+  // generateInvoice persists the global tax rate, then recalculates totals
+  // with the submitted discount.
+  const existing = await db.invoice.findUnique({
+    where: { bookingId },
+    select: { paidAt: true },
+  });
+  const invoice = await generateInvoice(bookingId, {
+    taxRate: parsed.data.taxRate,
+    discountAmount: parsed.data.discountAmount,
+  });
+
+  await db.invoice.update({
+    where: { id: invoice.id },
+    data: {
+      paymentStatus: parsed.data.paymentStatus,
+      paymentMethod: parsed.data.paymentMethod || null,
+      // Stamp the paid date the first time an invoice becomes fully paid.
+      ...(parsed.data.paymentStatus === "PAID" && !existing?.paidAt
+        ? { paidAt: new Date() }
+        : {}),
+    },
+  });
+
+  revalidatePath(`/admin/bookings/${bookingId}`);
+  revalidatePath(`/admin/bookings/${bookingId}/invoice`);
   revalidatePath("/admin/dashboard");
   return {};
 }

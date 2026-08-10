@@ -41,3 +41,16 @@ body {
   font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, Arial, sans-serif;
 }
+
+/* Print: strip admin chrome so invoices print full-bleed and clean. */
+@media print {
+  body {
+    background: #fff !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  @page {
+    margin: 1.5cm;
+  }
+}

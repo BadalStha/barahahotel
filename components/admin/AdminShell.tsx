@@ -42,7 +42,7 @@ const NAV_SECTIONS: {
     items: [
       { label: "Bookings", href: "/admin/bookings", icon: CalendarDays },
       { label: "Rooms", href: "/admin/rooms", icon: BedDouble },
-      { label: "Food & Billing", href: "/admin/food-billing", icon: Utensils },
+      { label: "Food Menu", href: "/admin/food-menu", icon: Utensils },
     ],
   },
   {
@@ -140,7 +140,7 @@ export function AdminShell({
   return (
     <div className="min-h-screen bg-stone">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-pine lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-pine lg:flex print:hidden">
         <Brand />
         <NavList />
       </aside>
@@ -158,7 +158,7 @@ export function AdminShell({
             className="absolute inset-0 bg-charcoal/50"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col bg-pine shadow-xl">
+          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col bg-pine shadow-xl print:hidden">
             <div className="flex items-center justify-between">
               <Brand />
               <button
@@ -177,7 +177,7 @@ export function AdminShell({
 
       {/* Main column */}
       <div className="flex min-h-screen flex-col lg:pl-64">
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-charcoal/10 bg-white px-4 sm:px-6">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-charcoal/10 bg-white px-4 sm:px-6 print:hidden">
           <button
             type="button"
             aria-label="Open menu"

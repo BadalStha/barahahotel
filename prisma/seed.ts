@@ -114,6 +114,7 @@ const siteSettings = [
   { key: "location", value: "Bhedetar, Dhankuta, Nepal" },
   { key: "phone", value: "+977-00-0000000" },
   { key: "email", value: "info@barahahotel.com" },
+  { key: "invoice_tax_rate", value: 13 }, // Nepal VAT %, configurable in the invoice screen
 ];
 
 const roomSeeds = [

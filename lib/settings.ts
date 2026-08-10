@@ -1,0 +1,44 @@
+import { db } from "@/lib/db";
+
+/**
+ * Site settings are stored as JSON-encoded text values keyed by name —
+ * see the seed data in prisma/seed.ts (hotel_name, location, phone, …).
+ */
+
+export const TAX_RATE_SETTING_KEY = "invoice_tax_rate";
+
+/** Nepal's standard VAT rate — used when no setting has been configured. */
+export const DEFAULT_TAX_RATE = 13;
+
+/** Reads every SiteSetting and returns them parsed from their JSON encoding. */
+export async function getSiteSettings(): Promise<Record<string, unknown>> {
+  const rows = await db.siteSetting.findMany();
+  const settings: Record<string, unknown> = {};
+  for (const row of rows) {
+    try {
+      settings[row.key] = JSON.parse(row.value);
+    } catch {
+      settings[row.key] = row.value;
+    }
+  }
+  return settings;
+}
+
+/** The configured invoice tax rate (percent), falling back to the default. */
+export async function getTaxRate(): Promise<number> {
+  const settings = await getSiteSettings();
+  const raw = settings[TAX_RATE_SETTING_KEY];
+  const rate = typeof raw === "number" ? raw : Number(raw);
+  return Number.isFinite(rate) && rate >= 0 && rate <= 100
+    ? rate
+    : DEFAULT_TAX_RATE;
+}
+
+/** Persists the invoice tax rate as a SiteSetting (upsert). */
+export async function setTaxRate(rate: number): Promise<void> {
+  await db.siteSetting.upsert({
+    where: { key: TAX_RATE_SETTING_KEY },
+    update: { value: JSON.stringify(rate) },
+    create: { key: TAX_RATE_SETTING_KEY, value: JSON.stringify(rate) },
+  });
+}
