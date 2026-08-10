@@ -5,13 +5,21 @@ import { ArrowLeft, BedDouble, Ruler, Users } from "lucide-react";
 
 import { BookingWidget } from "@/components/public/BookingWidget";
 import { CmsImage } from "@/components/public/CmsImage";
+import { JsonLd } from "@/components/public/JsonLd";
 import { RoomCard } from "@/components/public/RoomCard";
 import { Container } from "@/components/ui/Container";
 import { MountainDivider } from "@/components/ui/SectionHeading";
 import { db } from "@/lib/db";
 import { formatNPR } from "@/lib/format";
+import {
+  absoluteImage,
+  breadcrumbJsonLd,
+  socialMetadata,
+  url,
+} from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+// ISR: cached for an hour, revalidated immediately by admin room edits.
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -24,11 +32,15 @@ export async function generateMetadata({
     select: { name: true, description: true },
   });
   if (!roomType) return { title: "Room not found" };
+  const title = roomType.name;
+  const description =
+    roomType.description ??
+    `Book the ${roomType.name} at Baraha Hotel and Lodge, Bhedetar, Dhankuta.`;
   return {
-    title: roomType.name,
-    description:
-      roomType.description ??
-      `Book the ${roomType.name} at Baraha Hotel and Lodge, Bhedetar, Dhankuta.`,
+    title,
+    description,
+    // og:image comes from the file-based opengraph-image.tsx in this folder.
+    ...socialMetadata({ title, description, path: `/rooms/${slug}` }),
   };
 }
 
@@ -38,6 +50,7 @@ export default async function PublicRoomDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
   const [roomType, otherRooms] = await Promise.all([
     db.roomType.findUnique({
       where: { slug },
@@ -55,6 +68,22 @@ export default async function PublicRoomDetailPage({
     }),
   ]);
   if (!roomType || !roomType.isActive) notFound();
+
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: roomType.name,
+    description: roomType.description ?? undefined,
+    image: absoluteImage(roomType.images[0]?.url),
+    brand: { "@type": "Brand", name: "Baraha Hotel and Lodge" },
+    offers: {
+      "@type": "Offer",
+      url: url(`/rooms/${roomType.slug}`),
+      priceCurrency: "NPR",
+      price: Number(roomType.basePrice),
+      availability: "https://schema.org/InStock",
+    },
+  };
 
   return (
     <div>
@@ -94,8 +123,9 @@ export default async function PublicRoomDetailPage({
                 <CmsImage
                   src={roomType.images[0]?.url}
                   alt={roomType.images[0]?.altText ?? roomType.name}
-                  className="aspect-[16/9] w-full rounded-2xl border border-pine/15 object-cover shadow-[0_14px_32px_-16px_rgba(43,38,32,0.35)]"
                   priority
+                  sizes="(max-width: 1024px) 100vw, 65vw"
+                  className="aspect-[16/9] w-full rounded-2xl border border-pine/15"
                 />
                 {roomType.images.length > 1 ? (
                   <div className="flex gap-3 overflow-x-auto pb-1">
@@ -104,7 +134,8 @@ export default async function PublicRoomDetailPage({
                         key={img.id}
                         src={img.url}
                         alt={img.altText ?? ""}
-                        className="h-24 w-36 shrink-0 rounded-xl border border-charcoal/10 object-cover"
+                        sizes="144px"
+                        className="h-24 w-36 shrink-0 rounded-xl border border-charcoal/10"
                       />
                     ))}
                   </div>
@@ -181,6 +212,17 @@ export default async function PublicRoomDetailPage({
           </div>
         ) : null}
       </Container>
+
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Rooms & Suites", path: "/rooms" },
+            { name: roomType.name, path: `/rooms/${roomType.slug}` },
+          ]),
+          productJsonLd,
+        ]}
+      />
     </div>
   );
 }

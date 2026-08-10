@@ -3,18 +3,38 @@ import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 
 import { CmsImage } from "@/components/public/CmsImage";
+import { JsonLd } from "@/components/public/JsonLd";
 import { PageHero } from "@/components/public/PageHero";
 import { Container } from "@/components/ui/Container";
 import { db } from "@/lib/db";
 import { formatDate } from "@/lib/format";
+import { breadcrumbJsonLd, socialMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+// ISR: cached for an hour, revalidated immediately by admin blog edits.
+export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description:
-    "Stories and travel notes from Baraha Hotel and Lodge — treks, food, and the Dhankuta hills.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const latest = await db.blogPost.findFirst({
+    where: { isPublished: true },
+    orderBy: { publishedAt: "desc" },
+    select: { coverImageUrl: true },
+  });
+
+  const title = "Blog";
+  const description =
+    "Stories and travel notes from Baraha Hotel and Lodge — treks, food, and the Dhankuta hills.";
+
+  return {
+    title,
+    description,
+    ...socialMetadata({
+      title,
+      description,
+      path: "/blog",
+      image: latest?.coverImageUrl,
+    }),
+  };
+}
 
 export default async function BlogListPage() {
   const posts = await db.blogPost.findMany({
@@ -45,7 +65,9 @@ export default async function BlogListPage() {
                 <CmsImage
                   src={post.coverImageUrl}
                   alt={post.title}
-                  className="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="h-44 w-full"
+                  imageClassName="transition-transform duration-500 group-hover:scale-105"
                   iconClassName="size-10"
                 />
                 <div className="flex flex-1 flex-col p-5">
@@ -70,6 +92,13 @@ export default async function BlogListPage() {
           </div>
         )}
       </Container>
+
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Blog", path: "/blog" },
+        ])}
+      />
     </div>
   );
 }

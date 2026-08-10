@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { db } from "@/lib/db";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import {
   testimonialSchema,
   type TestimonialInput,
@@ -26,6 +27,7 @@ export async function createTestimonialAction(
     },
   });
   revalidatePath("/admin/testimonials");
+  revalidatePublicSite();
   redirect(`/admin/testimonials/${testimonial.id}/edit`);
 }
 
@@ -52,6 +54,7 @@ export async function updateTestimonialAction(
     },
   });
   revalidatePath("/admin/testimonials");
+  revalidatePublicSite();
   redirect(`/admin/testimonials/${id}/edit`);
 }
 
@@ -67,6 +70,7 @@ export async function toggleTestimonialPublishedAction(
 
   await db.testimonial.update({ where: { id }, data: { isPublished } });
   revalidatePath("/admin/testimonials");
+  revalidatePublicSite();
   return {};
 }
 
@@ -79,5 +83,6 @@ export async function deleteTestimonialAction(id: string): Promise<ActionResult>
 
   await db.testimonial.delete({ where: { id } });
   revalidatePath("/admin/testimonials");
+  revalidatePublicSite();
   redirect("/admin/testimonials");
 }

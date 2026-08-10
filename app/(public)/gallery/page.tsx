@@ -1,17 +1,36 @@
 import type { Metadata } from "next";
 
 import { GalleryGrid } from "@/components/public/GalleryGrid";
+import { JsonLd } from "@/components/public/JsonLd";
 import { PageHero } from "@/components/public/PageHero";
 import { Container } from "@/components/ui/Container";
 import { db } from "@/lib/db";
+import { breadcrumbJsonLd, socialMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+// ISR: cached for an hour, revalidated immediately by admin gallery edits.
+export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Gallery",
-  description:
-    "Photos of Baraha Hotel and Lodge — rooms, dining, and the Dhankuta hills.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const firstPhoto = await db.galleryImage.findFirst({
+    orderBy: { sortOrder: "asc" },
+    select: { url: true },
+  });
+
+  const title = "Gallery";
+  const description =
+    "Photos of Baraha Hotel and Lodge — rooms, dining, and the Dhankuta hills.";
+
+  return {
+    title,
+    description,
+    ...socialMetadata({
+      title,
+      description,
+      path: "/gallery",
+      image: firstPhoto?.url,
+    }),
+  };
+}
 
 export default async function GalleryPage() {
   const photos = await db.galleryImage.findMany({
@@ -35,6 +54,13 @@ export default async function GalleryPage() {
           }))}
         />
       </Container>
+
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Gallery", path: "/gallery" },
+        ])}
+      />
     </div>
   );
 }

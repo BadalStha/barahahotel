@@ -30,7 +30,8 @@ function renderBlock(block: ContentBlock, index: number): ReactNode {
           key={index}
           src={block.url}
           alt={block.alt || ""}
-          className="aspect-[16/9] w-full rounded-2xl border border-pine/15 object-cover shadow-[0_14px_32px_-16px_rgba(43,38,32,0.35)]"
+          sizes="(max-width: 768px) 100vw, 768px"
+          className="aspect-[16/9] w-full rounded-2xl border border-pine/15 shadow-[0_14px_32px_-16px_rgba(43,38,32,0.35)]"
         />
       ) : null;
     default:

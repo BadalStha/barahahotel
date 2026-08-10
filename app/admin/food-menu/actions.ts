@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 
 import { db } from "@/lib/db";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import {
   foodMenuItemSchema,
   type FoodMenuItemFormInput,
@@ -32,6 +33,7 @@ export async function createFoodMenuItemAction(
       data: { ...data, imageUrl: imageUrl || null },
     });
     revalidatePath("/admin/food-menu");
+    revalidatePublicSite();
     redirect("/admin/food-menu");
   } catch (error) {
     if (isUniqueError(error)) {
@@ -58,6 +60,7 @@ export async function updateFoodMenuItemAction(
       data: { ...data, imageUrl: imageUrl || null },
     });
     revalidatePath("/admin/food-menu");
+    revalidatePublicSite();
     redirect("/admin/food-menu");
   } catch (error) {
     if (isUniqueError(error)) {
@@ -73,6 +76,7 @@ export async function toggleFoodMenuItemAvailableAction(
 ): Promise<ActionResult> {
   await db.foodMenuItem.update({ where: { id }, data: { isAvailable } });
   revalidatePath("/admin/food-menu");
+  revalidatePublicSite();
   return {};
 }
 
@@ -96,5 +100,6 @@ export async function deleteFoodMenuItemAction(
 
   await db.foodMenuItem.delete({ where: { id } });
   revalidatePath("/admin/food-menu");
+  revalidatePublicSite();
   return {};
 }

@@ -4,12 +4,20 @@ import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 
 import { CmsImage } from "@/components/public/CmsImage";
+import { JsonLd } from "@/components/public/JsonLd";
 import { Container } from "@/components/ui/Container";
 import { MountainDivider } from "@/components/ui/SectionHeading";
 import { db } from "@/lib/db";
 import { formatDate } from "@/lib/format";
+import {
+  absoluteImage,
+  breadcrumbJsonLd,
+  socialMetadata,
+  url,
+} from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+// ISR: cached for an hour, revalidated immediately by admin blog edits.
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -19,9 +27,18 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await db.blogPost.findUnique({ where: { slug } });
   if (!post || !post.isPublished) return { title: "Story not found" };
+  const title = post.metaTitle ?? post.title;
+  const description = post.metaDescription ?? post.excerpt ?? undefined;
   return {
-    title: post.metaTitle ?? post.title,
-    description: post.metaDescription ?? post.excerpt ?? undefined,
+    title,
+    description,
+    ...socialMetadata({
+      title,
+      description,
+      path: `/blog/${post.slug}`,
+      image: post.coverImageUrl,
+      type: "article",
+    }),
   };
 }
 
@@ -31,6 +48,7 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
   const post = await db.blogPost.findUnique({ where: { slug } });
   if (!post || !post.isPublished) notFound();
 
@@ -38,6 +56,19 @@ export default async function BlogPostPage({
     .split(/\n\s*\n/)
     .map((p) => p.trim())
     .filter(Boolean);
+
+  const blogPostingJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt ?? undefined,
+    image: absoluteImage(post.coverImageUrl),
+    datePublished: post.publishedAt?.toISOString(),
+    dateModified: post.updatedAt.toISOString(),
+    url: url(`/blog/${post.slug}`),
+    author: { "@type": "Organization", name: "Baraha Hotel and Lodge" },
+    publisher: { "@type": "Organization", name: "Baraha Hotel and Lodge" },
+  };
 
   return (
     <div>
@@ -55,7 +86,8 @@ export default async function BlogPostPage({
               src={post.coverImageUrl}
               alt={post.title}
               priority
-              className="aspect-[16/8] w-full rounded-2xl border border-pine/15 object-cover shadow-[0_14px_32px_-16px_rgba(43,38,32,0.35)]"
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="aspect-[16/8] w-full rounded-2xl border border-pine/15"
             />
           ) : null}
 
@@ -89,6 +121,17 @@ export default async function BlogPostPage({
           ) : null}
         </article>
       </Container>
+
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: post.title, path: `/blog/${post.slug}` },
+          ]),
+          blogPostingJsonLd,
+        ]}
+      />
     </div>
   );
 }

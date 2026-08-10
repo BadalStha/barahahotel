@@ -4,27 +4,47 @@ import { ArrowRight, Mountain, Utensils, Wifi } from "lucide-react";
 
 import { BookingWidget } from "@/components/public/BookingWidget";
 import { CmsImage } from "@/components/public/CmsImage";
+import { JsonLd } from "@/components/public/JsonLd";
 import { RoomCard } from "@/components/public/RoomCard";
 import { TestimonialCarousel } from "@/components/public/TestimonialCarousel";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { db } from "@/lib/db";
 import { getSetting, getSiteSettings } from "@/lib/settings";
+import {
+  absoluteImage,
+  socialMetadata,
+  url,
+} from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+// ISR: cached for an hour, revalidated immediately by admin save actions
+// (revalidatePublicSite) and in the background every 3600s.
+export const revalidate = 3600;
 
 const USP_ICONS = [Mountain, Utensils, Wifi];
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
+  const title = getSetting(
+    settings,
+    "homepage_hero_title",
+    "Baraha Hotel and Lodge",
+  );
+  const description = getSetting(
+    settings,
+    "tagline",
+    "A Himalayan hill-station retreat in Bhedetar, Dhankuta, Nepal.",
+  );
   return {
-    title: getSetting(settings, "homepage_hero_title", "Baraha Hotel and Lodge"),
-    description: getSetting(
-      settings,
-      "tagline",
-      "A Himalayan hill-station retreat in Bhedetar, Dhankuta, Nepal.",
-    ),
+    title,
+    description,
+    ...socialMetadata({
+      title,
+      description,
+      path: "/",
+      image: getSetting(settings, "homepage_hero_image") || null,
+    }),
   };
 }
 
@@ -57,18 +77,35 @@ export default async function Home() {
     }))
     .filter((usp) => usp.title || usp.text);
 
+  // Bhedetar sits on the Koshi Highway at the foot of the Dhankuta hills.
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Hotel",
     name: hotelName,
     description: str("tagline"),
+    url: url("/"),
+    telephone: str("phone") || undefined,
+    email: str("email") || undefined,
+    image: absoluteImage(heroImage),
+    priceRange: featuredRooms[0]
+      ? `NPR ${Number(featuredRooms[0].basePrice)} / night`
+      : undefined,
     address: {
       "@type": "PostalAddress",
       addressLocality: str("location"),
+      addressCountry: "NP",
     },
-    telephone: str("phone"),
-    email: str("email"),
-    image: heroImage || undefined,
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 26.9357,
+      longitude: 87.2822,
+    },
+    sameAs: [
+      str("social_facebook"),
+      str("social_instagram"),
+      str("social_twitter"),
+      str("social_youtube"),
+    ].filter(Boolean),
   };
 
   return (
@@ -79,7 +116,8 @@ export default async function Home() {
           src={heroImage}
           alt=""
           priority
-          className="absolute inset-0 size-full object-cover"
+          sizes="100vw"
+          className="absolute inset-0 size-full"
           iconClassName="size-16"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-pine/80 via-pine/70 to-pine/85" />
@@ -212,7 +250,8 @@ export default async function Home() {
               <CmsImage
                 src={str("homepage_viewpoint_image")}
                 alt={str("homepage_viewpoint_title")}
-                className="aspect-[4/3] w-full rounded-2xl border border-pine/15 object-cover shadow-[0_20px_40px_-16px_rgba(31,77,58,0.4)]"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="aspect-[4/3] w-full rounded-2xl border border-pine/15"
                 iconClassName="size-16"
               />
             </div>
@@ -286,10 +325,7 @@ export default async function Home() {
       </section>
 
       {/* Structured data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
     </div>
   );
 }

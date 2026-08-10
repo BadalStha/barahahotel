@@ -2,19 +2,39 @@ import type { Metadata } from "next";
 import { Utensils } from "lucide-react";
 
 import { CmsImage } from "@/components/public/CmsImage";
+import { JsonLd } from "@/components/public/JsonLd";
 import { PageHero } from "@/components/public/PageHero";
 import { Container } from "@/components/ui/Container";
 import { db } from "@/lib/db";
 import { formatNPR } from "@/lib/format";
+import { breadcrumbJsonLd, socialMetadata } from "@/lib/seo";
 import { FOOD_CATEGORIES, FOOD_CATEGORY_LABELS } from "@/lib/validators/food";
 
-export const dynamic = "force-dynamic";
+// ISR: cached for an hour, revalidated immediately by admin menu edits.
+export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Dining",
-  description:
-    "Dal bhat, gundruk soup, and Dhankuta specialities — home-style food at Baraha Hotel and Lodge.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const firstItem = await db.foodMenuItem.findFirst({
+    where: { isAvailable: true },
+    orderBy: { name: "asc" },
+    select: { imageUrl: true },
+  });
+
+  const title = "Dining";
+  const description =
+    "Dal bhat, gundruk soup, and Dhankuta specialities — home-style food at Baraha Hotel and Lodge.";
+
+  return {
+    title,
+    description,
+    ...socialMetadata({
+      title,
+      description,
+      path: "/dining",
+      image: firstItem?.imageUrl,
+    }),
+  };
+}
 
 export default async function DiningPage() {
   const items = await db.foodMenuItem.findMany({
@@ -62,7 +82,8 @@ export default async function DiningPage() {
                       <CmsImage
                         src={item.imageUrl}
                         alt={item.name}
-                        className="size-20 shrink-0 rounded-xl object-cover"
+                        sizes="80px"
+                        className="size-20 shrink-0 rounded-xl"
                         iconClassName="size-7"
                       />
                       <div className="flex min-w-0 flex-1 flex-col">
@@ -99,6 +120,13 @@ export default async function DiningPage() {
           </div>
         )}
       </Container>
+
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Dining", path: "/dining" },
+        ])}
+      />
     </div>
   );
 }

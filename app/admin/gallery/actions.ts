@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import {
   galleryImageSchema,
   type GalleryImageInput,
@@ -30,6 +31,7 @@ export async function createGalleryImageAction(
   });
 
   revalidatePath("/admin/gallery");
+  revalidatePublicSite();
   return {};
 }
 
@@ -56,6 +58,7 @@ export async function updateGalleryImageAction(
   });
 
   revalidatePath("/admin/gallery");
+  revalidatePublicSite();
   return {};
 }
 
@@ -94,6 +97,7 @@ export async function reorderGalleryImageAction(
   ]);
 
   revalidatePath("/admin/gallery");
+  revalidatePublicSite();
   return {};
 }
 
@@ -106,5 +110,6 @@ export async function deleteGalleryImageAction(id: string): Promise<ActionResult
 
   await db.galleryImage.delete({ where: { id } });
   revalidatePath("/admin/gallery");
+  revalidatePublicSite();
   return {};
 }

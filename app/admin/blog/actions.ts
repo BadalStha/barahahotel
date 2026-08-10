@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 
 import { db } from "@/lib/db";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import {
   blogPostSchema,
   type BlogPostInput,
@@ -46,6 +47,7 @@ export async function createBlogPostAction(
       },
     });
     revalidatePath("/admin/blog");
+    revalidatePublicSite();
     redirect(`/admin/blog/${post.slug}/edit`);
   } catch (error) {
     if (isUniqueError(error)) {
@@ -82,6 +84,7 @@ export async function updateBlogPostAction(
     revalidatePath("/admin/blog");
     revalidatePath(`/admin/blog/${existing.slug}/edit`);
     revalidatePath(`/admin/blog/${parsed.data.slug}/edit`);
+    revalidatePublicSite();
     redirect(`/admin/blog/${parsed.data.slug}/edit`);
   } catch (error) {
     if (isUniqueError(error)) {
@@ -111,6 +114,7 @@ export async function toggleBlogPostPublishedAction(
   });
 
   revalidatePath("/admin/blog");
+  revalidatePublicSite();
   return {};
 }
 
@@ -123,5 +127,6 @@ export async function deleteBlogPostAction(slug: string): Promise<ActionResult> 
 
   await db.blogPost.delete({ where: { id: post.id } });
   revalidatePath("/admin/blog");
+  revalidatePublicSite();
   redirect("/admin/blog");
 }

@@ -1,17 +1,39 @@
 import type { Metadata } from "next";
 
+import { JsonLd } from "@/components/public/JsonLd";
 import { PageHero } from "@/components/public/PageHero";
 import { RoomCard } from "@/components/public/RoomCard";
 import { Container } from "@/components/ui/Container";
 import { db } from "@/lib/db";
+import { breadcrumbJsonLd, socialMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+// ISR: cached for an hour, revalidated immediately by admin room edits.
+export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Rooms & Suites",
-  description:
-    "Standard, deluxe and family rooms at Baraha Hotel and Lodge in Bhedetar, Dhankuta — prices per night, max occupancy and amenities.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const firstRoom = await db.roomType.findFirst({
+    where: { isActive: true },
+    orderBy: { basePrice: "asc" },
+    select: {
+      images: { orderBy: { sortOrder: "asc" }, take: 1 },
+    },
+  });
+
+  const title = "Rooms & Suites";
+  const description =
+    "Standard, deluxe and family rooms at Baraha Hotel and Lodge in Bhedetar, Dhankuta — prices per night, max occupancy and amenities.";
+
+  return {
+    title,
+    description,
+    ...socialMetadata({
+      title,
+      description,
+      path: "/rooms",
+      image: firstRoom?.images[0]?.url,
+    }),
+  };
+}
 
 export default async function PublicRoomsPage() {
   const roomTypes = await db.roomType.findMany({
@@ -55,6 +77,13 @@ export default async function PublicRoomsPage() {
           </div>
         )}
       </Container>
+
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Rooms & Suites", path: "/rooms" },
+        ])}
+      />
     </div>
   );
 }

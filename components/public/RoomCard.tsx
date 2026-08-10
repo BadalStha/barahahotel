@@ -32,7 +32,9 @@ export function RoomCard({
         <CmsImage
           src={room.imageUrl}
           alt={room.imageAlt ?? room.name}
-          className="h-48 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="h-48 w-full"
+          imageClassName="transition-transform duration-500 group-hover:scale-105"
           iconClassName="size-12"
         />
       </div>

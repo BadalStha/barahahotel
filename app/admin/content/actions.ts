@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 
 import { db } from "@/lib/db";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { setSiteSettings } from "@/lib/settings";
 import {
   pageSchema,
@@ -67,6 +68,7 @@ export async function updateSiteSettingsAction(
   await setSiteSettings(entries);
 
   revalidatePath("/admin/content/settings");
+  revalidatePublicSite();
   return {};
 }
 
@@ -87,6 +89,7 @@ export async function createPageAction(input: PageInput): Promise<ActionResult> 
       },
     });
     revalidatePath("/admin/content/pages");
+    revalidatePublicSite();
     redirect(`/admin/content/pages/${page.slug}/edit`);
   } catch (error) {
     if (isUniqueError(error)) {
@@ -120,6 +123,7 @@ export async function updatePageAction(
     revalidatePath("/admin/content/pages");
     revalidatePath(`/admin/content/pages/${existing.slug}/edit`);
     revalidatePath(`/admin/content/pages/${parsed.data.slug}/edit`);
+    revalidatePublicSite();
     redirect(`/admin/content/pages/${parsed.data.slug}/edit`);
   } catch (error) {
     if (isUniqueError(error)) {
@@ -135,5 +139,6 @@ export async function deletePageAction(slug: string): Promise<ActionResult> {
 
   await db.page.delete({ where: { id: page.id } });
   revalidatePath("/admin/content/pages");
+  revalidatePublicSite();
   redirect("/admin/content/pages");
 }

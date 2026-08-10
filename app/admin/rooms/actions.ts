@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 
 import { db } from "@/lib/db";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import {
   roomSchema,
   roomStatusSchema,
@@ -62,6 +63,7 @@ export async function createRoomTypeAction(
       },
     });
     revalidatePath("/admin/rooms");
+    revalidatePublicSite();
     redirect(`/admin/rooms/${roomType.slug}`);
   } catch (error) {
     if (isUniqueError(error)) {
@@ -102,6 +104,7 @@ export async function updateRoomTypeAction(
     revalidatePath("/admin/rooms");
     revalidatePath(`/admin/rooms/${existing.slug}`);
     revalidatePath(`/admin/rooms/${data.slug}`);
+    revalidatePublicSite();
     // Redirect to the *new* slug — the form lets admins rename it.
     redirect(`/admin/rooms/${data.slug}`);
   } catch (error) {
@@ -119,6 +122,7 @@ export async function toggleRoomTypeActiveAction(
   await db.roomType.update({ where: { slug }, data: { isActive } });
   revalidatePath("/admin/rooms");
   revalidatePath(`/admin/rooms/${slug}`);
+  revalidatePublicSite();
   return {};
 }
 
@@ -164,6 +168,7 @@ export async function deleteRoomTypeAction(slug: string): Promise<ActionResult> 
   });
 
   revalidatePath("/admin/rooms");
+  revalidatePublicSite();
   redirect("/admin/rooms");
 }
 

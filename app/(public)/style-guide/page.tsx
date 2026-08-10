@@ -15,6 +15,10 @@ import {
   SectionHeading,
 } from "@/components/ui/SectionHeading";
 
+// Kept dynamic so the public layout (which reads site settings) is never
+// prerendered at build time.
+export const dynamic = "force-dynamic";
+
 const palette = [
   {
     name: "Pine",

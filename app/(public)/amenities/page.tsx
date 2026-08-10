@@ -3,18 +3,35 @@ import type { Metadata } from "next";
 import { CheckCircle2 } from "lucide-react";
 
 import { BlocksRenderer } from "@/components/public/BlocksRenderer";
+import { JsonLd } from "@/components/public/JsonLd";
 import { PageHero } from "@/components/public/PageHero";
 import { Container } from "@/components/ui/Container";
 import { db } from "@/lib/db";
+import { breadcrumbJsonLd, socialMetadata } from "@/lib/seo";
+import { getSetting, getSiteSettings } from "@/lib/settings";
 import type { ContentBlock } from "@/lib/validators/content";
 
-export const dynamic = "force-dynamic";
+// ISR: cached for an hour, revalidated immediately by admin content edits.
+export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Amenities",
-  description:
-    "Rooms, dining, WiFi, and more — see what's included with your stay at Baraha Hotel and Lodge.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const [page, settings] = await Promise.all([
+    db.page.findUnique({ where: { slug: "amenities" } }),
+    getSiteSettings(),
+  ]);
+  const title = page?.metaTitle ?? page?.title ?? "Amenities";
+  const description = page?.metaDescription ?? undefined;
+  return {
+    title,
+    description,
+    ...socialMetadata({
+      title,
+      description,
+      path: "/amenities",
+      image: getSetting(settings, "homepage_hero_image") || null,
+    }),
+  };
+}
 
 export default async function AmenitiesPage() {
   const page = await db.page.findUnique({ where: { slug: "amenities" } });
@@ -66,6 +83,13 @@ export default async function AmenitiesPage() {
           </div>
         ) : null}
       </Container>
+
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Amenities", path: "/amenities" },
+        ])}
+      />
     </div>
   );
 }

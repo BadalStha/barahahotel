@@ -2,18 +2,33 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { BlocksRenderer } from "@/components/public/BlocksRenderer";
+import { JsonLd } from "@/components/public/JsonLd";
 import { PageHero } from "@/components/public/PageHero";
 import { Container } from "@/components/ui/Container";
 import { db } from "@/lib/db";
+import { breadcrumbJsonLd, socialMetadata } from "@/lib/seo";
+import { getSetting, getSiteSettings } from "@/lib/settings";
 import type { ContentBlock } from "@/lib/validators/content";
 
-export const dynamic = "force-dynamic";
+// ISR: cached for an hour, revalidated immediately by admin content edits.
+export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await db.page.findUnique({ where: { slug: "about" } });
+  const [page, settings] = await Promise.all([
+    db.page.findUnique({ where: { slug: "about" } }),
+    getSiteSettings(),
+  ]);
+  const title = page?.metaTitle ?? page?.title ?? "About Us";
+  const description = page?.metaDescription ?? undefined;
   return {
-    title: page?.metaTitle ?? page?.title ?? "About Us",
-    description: page?.metaDescription ?? undefined,
+    title,
+    description,
+    ...socialMetadata({
+      title,
+      description,
+      path: "/about",
+      image: getSetting(settings, "homepage_hero_image") || null,
+    }),
   };
 }
 
@@ -42,6 +57,13 @@ export default async function AboutPage() {
           </p>
         )}
       </Container>
+
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "About", path: "/about" },
+        ])}
+      />
     </div>
   );
 }

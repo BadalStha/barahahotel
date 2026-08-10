@@ -3,11 +3,15 @@ import {
   BookingFlow,
   type BookingFlowInitial,
 } from "@/components/public/BookingFlow";
+import { socialMetadata } from "@/lib/seo";
 
 export const metadata = {
-  title: "Book a Stay — Baraha Hotel and Lodge",
-  description:
-    "Check live availability and book a room at Baraha Hotel and Lodge, Bhedetar, Dhankuta, Nepal.",
+  ...socialMetadata({
+    title: "Book a Stay — Baraha Hotel and Lodge",
+    description:
+      "Check live availability and book a room at Baraha Hotel and Lodge, Bhedetar, Dhankuta, Nepal.",
+    path: "/booking",
+  }),
 };
 
 export default async function BookingPage({

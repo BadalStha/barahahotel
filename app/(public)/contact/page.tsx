@@ -2,17 +2,31 @@ import type { Metadata } from "next";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 
 import { ContactForm } from "@/components/public/ContactForm";
+import { JsonLd } from "@/components/public/JsonLd";
 import { PageHero } from "@/components/public/PageHero";
 import { Container } from "@/components/ui/Container";
+import { breadcrumbJsonLd, socialMetadata } from "@/lib/seo";
 import { getSetting, getSiteSettings } from "@/lib/settings";
 
-export const dynamic = "force-dynamic";
+// ISR: cached for an hour, revalidated immediately by admin settings edits.
+export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Get in touch with Baraha Hotel and Lodge in Bhedetar, Dhankuta — call, email, or send us a message.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  const title = "Contact";
+  const description =
+    "Get in touch with Baraha Hotel and Lodge in Bhedetar, Dhankuta — call, email, or send us a message.";
+  return {
+    title,
+    description,
+    ...socialMetadata({
+      title,
+      description,
+      path: "/contact",
+      image: getSetting(settings, "homepage_hero_image") || null,
+    }),
+  };
+}
 
 export default async function ContactPage() {
   const settings = await getSiteSettings();
@@ -115,6 +129,13 @@ export default async function ContactPage() {
           </div>
         </div>
       </Container>
+
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Contact", path: "/contact" },
+        ])}
+      />
     </div>
   );
 }

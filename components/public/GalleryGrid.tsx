@@ -13,6 +13,16 @@ export type GalleryPhoto = {
   category: string | null;
 };
 
+// Cycling aspect ratios give the masonry columns their staggered rhythm
+// while every photo keeps a fixed box (required for next/image `fill`).
+const RATIOS = [
+  "aspect-[4/3]",
+  "aspect-square",
+  "aspect-[3/4]",
+  "aspect-[16/10]",
+  "aspect-[4/5]",
+] as const;
+
 export function GalleryGrid({ photos }: { photos: GalleryPhoto[] }) {
   const categories = useMemo(() => {
     const set = new Set<string>();
@@ -109,12 +119,14 @@ export function GalleryGrid({ photos }: { photos: GalleryPhoto[] }) {
             type="button"
             onClick={() => setLightboxIndex(index)}
             aria-label={`View ${photo.altText ?? "photo"} enlarged`}
-            className="group mb-4 block w-full cursor-zoom-in overflow-hidden rounded-xl border border-pine/15 shadow-[0_14px_32px_-16px_rgba(43,38,32,0.32)] transition-transform duration-300 hover:-translate-y-0.5"
+            className="group mb-4 block w-full break-inside-avoid cursor-zoom-in overflow-hidden rounded-xl border border-pine/15 shadow-[0_14px_32px_-16px_rgba(43,38,32,0.32)] transition-transform duration-300 hover:-translate-y-0.5"
           >
             <CmsImage
               src={photo.url}
               alt={photo.altText ?? ""}
-              className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className={cn("w-full", RATIOS[index % RATIOS.length])}
+              imageClassName="transition-transform duration-500 group-hover:scale-105"
               iconClassName="size-10"
             />
           </button>
@@ -151,12 +163,17 @@ export function GalleryGrid({ photos }: { photos: GalleryPhoto[] }) {
             <ChevronLeft className="size-6" />
           </button>
 
-          <figure className="max-h-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
+          <figure
+            className="w-full max-w-4xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             <CmsImage
               src={active.url}
               alt={active.altText ?? ""}
-              className="max-h-[80vh] w-auto rounded-xl object-contain"
+              className="aspect-[16/10] w-full max-h-[80vh] rounded-xl"
+              objectFit="contain"
               priority
+              sizes="(max-width: 896px) 100vw, 896px"
               iconClassName="size-14"
             />
             {active.altText ? (
