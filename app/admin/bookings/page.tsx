@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { BookingStatus } from "@prisma/client";
 import { CalendarRange, Plus } from "lucide-react";
 
+import { EmptyState } from "@/components/admin/EmptyState";
 import { StatusBadge } from "@/components/admin/bookings/StatusBadge";
 import { db } from "@/lib/db";
 import { formatDateShort } from "@/lib/format";
@@ -38,6 +39,7 @@ export default async function AdminBookingsPage({
     : undefined;
   const from = parseDate(params.from);
   const to = parseDate(params.to);
+  const hasFilters = !!(status || from || to);
 
   const bookings = await db.booking.findMany({
     where: {
@@ -142,27 +144,51 @@ export default async function AdminBookingsPage({
         </form>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-charcoal/10 bg-white shadow-sm">
-        <table className="w-full min-w-[760px] text-left text-sm">
-          <thead className="border-b border-charcoal/10 text-xs uppercase tracking-wider text-charcoal/50">
-            <tr>
-              <th className="px-5 py-3 font-semibold">Code</th>
-              <th className="px-5 py-3 font-semibold">Guest</th>
-              <th className="px-5 py-3 font-semibold">Room</th>
-              <th className="px-5 py-3 font-semibold">Stay</th>
-              <th className="px-5 py-3 font-semibold">Source</th>
-              <th className="px-5 py-3 font-semibold">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-charcoal/5">
-            {bookings.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-5 py-12 text-center text-sm text-charcoal/50">
-                  No bookings match these filters.
-                </td>
-              </tr>
+      {bookings.length === 0 ? (
+        <EmptyState
+          icon={CalendarRange}
+          title={
+            hasFilters ? "No bookings match these filters" : "No bookings yet"
+          }
+          description={
+            hasFilters
+              ? "Try widening your date range or clearing the status filter."
+              : "Create your first booking, or wait for guests to reserve on the website — bookings appear here automatically."
+          }
+          action={
+            hasFilters ? (
+              <Link
+                href="/admin/bookings"
+                className="inline-flex h-10 items-center gap-2 rounded-full border border-pine/40 px-5 text-sm font-medium text-pine transition-colors hover:bg-pine/10"
+              >
+                Clear filters
+              </Link>
             ) : (
-              bookings.map((booking) => (
+              <Link
+                href="/admin/bookings/new"
+                className="inline-flex h-10 items-center gap-2 rounded-full bg-pine px-5 text-sm font-medium text-stone transition-colors hover:bg-pine/90"
+              >
+                <Plus className="size-4" />
+                New booking
+              </Link>
+            )
+          }
+        />
+      ) : (
+        <div className="overflow-x-auto rounded-xl border border-charcoal/10 bg-white shadow-sm">
+          <table className="w-full min-w-[760px] text-left text-sm">
+            <thead className="border-b border-charcoal/10 text-xs uppercase tracking-wider text-charcoal/50">
+              <tr>
+                <th className="px-5 py-3 font-semibold">Code</th>
+                <th className="px-5 py-3 font-semibold">Guest</th>
+                <th className="px-5 py-3 font-semibold">Room</th>
+                <th className="px-5 py-3 font-semibold">Stay</th>
+                <th className="px-5 py-3 font-semibold">Source</th>
+                <th className="px-5 py-3 font-semibold">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-charcoal/5">
+              {bookings.map((booking) => (
                 <tr key={booking.id} className="transition-colors hover:bg-stone/50">
                   <td className="px-5 py-3">
                     <Link
@@ -195,11 +221,11 @@ export default async function AdminBookingsPage({
                     <StatusBadge status={booking.status} />
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

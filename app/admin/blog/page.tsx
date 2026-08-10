@@ -3,6 +3,7 @@ import { Newspaper, Pencil, Plus } from "lucide-react";
 
 import { PublishToggle } from "@/components/admin/content/PublishToggle";
 import { ConfirmButton } from "@/components/admin/rooms/ConfirmButton";
+import { CmsImage } from "@/components/public/CmsImage";
 import { db } from "@/lib/db";
 import { cn } from "@/lib/utils";
 import { deleteBlogPostAction, toggleBlogPostPublishedAction } from "./actions";
@@ -61,11 +62,12 @@ export default async function AdminBlogPage() {
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
                       {post.coverImageUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <CmsImage
                           src={post.coverImageUrl}
                           alt=""
-                          className="size-11 shrink-0 rounded-lg border border-charcoal/10 object-cover"
+                          sizes="44px"
+                          className="size-11 shrink-0 rounded-lg border border-charcoal/10"
+                          iconClassName="size-4"
                         />
                       ) : (
                         <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-pine/10 text-pine">

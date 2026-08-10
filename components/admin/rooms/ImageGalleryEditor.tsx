@@ -4,18 +4,15 @@ import { useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
-  ImagePlus,
   Link2,
   Trash2,
 } from "lucide-react";
-import { CldUploadWidget } from "next-cloudinary";
 
+import { ImageUploadButton } from "@/components/admin/ImageUploadButton";
 import { inputClass } from "@/components/admin/fields";
 import { cn } from "@/lib/utils";
 
 type GalleryImage = { url: string; altText: string };
-
-const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
 export function ImageGalleryEditor({
   images,
@@ -55,38 +52,18 @@ export function ImageGalleryEditor({
 
   return (
     <div className="flex flex-col gap-3">
-      {CLOUD_NAME ? (
-        <CldUploadWidget
-          signatureEndpoint="/api/cloudinary/sign"
-          options={{ multiple: true, maxFiles: 6, folder: "baraha-hotel/rooms" }}
-          onSuccess={(result) => {
-            if (
-              result.event === "success" &&
-              typeof result.info === "object" &&
-              result.info?.secure_url
-            ) {
-              onChange([...images, { url: result.info.secure_url, altText: "" }]);
-            }
-          }}
-        >
-          {({ open }) => (
-            <button
-              type="button"
-              onClick={() => open()}
-              className="inline-flex h-10 w-fit cursor-pointer items-center gap-2 rounded-xl border border-pine/30 px-4 text-sm font-medium text-pine transition-colors hover:bg-pine/10"
-            >
-              <ImagePlus className="size-4" />
-              Upload images
-            </button>
-          )}
-        </CldUploadWidget>
-      ) : (
-        <p className="text-xs text-charcoal/50">
-          Cloudinary isn&apos;t configured yet — add NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-          NEXT_PUBLIC_CLOUDINARY_API_KEY, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET
-          to .env to enable widget uploads. You can still paste image URLs below.
-        </p>
-      )}
+      <ImageUploadButton
+        folder="baraha-hotel/rooms"
+        multiple
+        onUploaded={(urls) => {
+          onChange([
+            ...images,
+            ...urls.map((url) => ({ url, altText: "" })),
+          ]);
+        }}
+      >
+        Upload images
+      </ImageUploadButton>
 
       <div className="flex gap-2">
         <input

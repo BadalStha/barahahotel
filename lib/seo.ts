@@ -15,8 +15,7 @@ export function url(path = "/"): string {
 
 /**
  * Turns a CMS image path into an absolute URL (for OG tags / schema) and
- * applies Cloudinary f_auto/q_auto so social + schema images are optimized
- * the same way on-page photos are.
+ * applies legacy-Cloudinary f_auto/q_auto (Blob URLs pass through).
  */
 export function absoluteImage(src?: string | null): string | undefined {
   if (!src) return undefined;
@@ -26,9 +25,9 @@ export function absoluteImage(src?: string | null): string | undefined {
 }
 
 /**
- * Appends Cloudinary's automatic format + quality ("f_auto,q_auto") to
- * Cloudinary URLs so CMS photos are served as optimally compressed
- * WebP/AVIF instead of the original JPEG/PNG bytes.
+ * Legacy-only: appends Cloudinary's automatic format + quality
+ * ("f_auto,q_auto") to Cloudinary URLs still stored in the DB. New uploads
+ * use Vercel Blob and pass through unchanged.
  */
 export function optimizeCloudinaryUrl(src?: string | null): string | undefined {
   if (!src) return undefined;

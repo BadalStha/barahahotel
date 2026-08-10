@@ -18,6 +18,7 @@ import {
   type BookingConfirmation,
 } from "@/app/(public)/booking/actions";
 import { Field, inputClass, inputErrorClass } from "@/components/admin/fields";
+import { CmsImage } from "@/components/public/CmsImage";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import type { AvailableRoomTypeGroup } from "@/lib/availability";
@@ -355,11 +356,12 @@ export function BookingFlow({ initial }: { initial: BookingFlowInitial }) {
                         className="size-4 accent-pine"
                       />
                       {type.imageUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <CmsImage
                           src={type.imageUrl}
                           alt=""
-                          className="hidden h-16 w-24 shrink-0 rounded-lg object-cover sm:block"
+                          sizes="96px"
+                          className="hidden h-16 w-24 shrink-0 rounded-lg sm:block"
+                          iconClassName="size-5"
                         />
                       ) : (
                         <span className="hidden h-16 w-24 shrink-0 items-center justify-center rounded-lg bg-pine/10 text-pine sm:flex">

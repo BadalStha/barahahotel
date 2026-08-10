@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ImagePlus, Link2, Trash2, Utensils } from "lucide-react";
-import { CldUploadWidget } from "next-cloudinary";
+import { Link2, Trash2, Utensils } from "lucide-react";
 
 import {
   createFoodMenuItemAction,
   updateFoodMenuItemAction,
 } from "@/app/admin/food-menu/actions";
+import { ImageUploadButton } from "@/components/admin/ImageUploadButton";
 import { Field, inputClass, inputErrorClass } from "@/components/admin/fields";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -24,8 +24,6 @@ import {
 const textareaClass =
   "w-full rounded-xl border border-charcoal/15 bg-white px-4 py-3 text-sm text-charcoal placeholder:text-charcoal/40 outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20";
 
-const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-
 export type FoodMenuItemFormData = {
   id: string;
   name: string;
@@ -38,6 +36,7 @@ export type FoodMenuItemFormData = {
 
 export function FoodMenuForm({ item }: { item?: FoodMenuItemFormData }) {
   const [error, setError] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [urlInput, setUrlInput] = useState("");
 
@@ -177,34 +176,15 @@ export function FoodMenuForm({ item }: { item?: FoodMenuItemFormData }) {
           )}
 
           <div className="flex flex-wrap items-center gap-2">
-            {CLOUD_NAME ? (
-              <CldUploadWidget
-                signatureEndpoint="/api/cloudinary/sign"
-                options={{ multiple: false, folder: "baraha-hotel/food" }}
-                onSuccess={(result) => {
-                  if (
-                    result.event === "success" &&
-                    typeof result.info === "object" &&
-                    result.info?.secure_url
-                  ) {
-                    setValue("imageUrl", result.info.secure_url, {
-                      shouldValidate: true,
-                    });
-                  }
-                }}
-              >
-                {({ open }) => (
-                  <button
-                    type="button"
-                    onClick={() => open()}
-                    className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-pine/30 px-4 text-sm font-medium text-pine transition-colors hover:bg-pine/10"
-                  >
-                    <ImagePlus className="size-4" />
-                    Upload photo
-                  </button>
-                )}
-              </CldUploadWidget>
-            ) : null}
+            <ImageUploadButton
+              folder="baraha-hotel/food"
+              onUploaded={([url]) =>
+                setValue("imageUrl", url, { shouldValidate: true })
+              }
+              onError={setUploadError}
+            >
+              Upload photo
+            </ImageUploadButton>
 
             <input
               value={urlInput}
@@ -227,6 +207,12 @@ export function FoodMenuForm({ item }: { item?: FoodMenuItemFormData }) {
               Add
             </button>
           </div>
+
+          {uploadError ? (
+            <p className="text-xs font-medium text-terracotta">
+              {uploadError}
+            </p>
+          ) : null}
         </div>
       </Field>
 

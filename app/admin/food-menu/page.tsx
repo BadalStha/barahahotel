@@ -4,6 +4,7 @@ import { Pencil, Plus, Utensils } from "lucide-react";
 
 import { AvailabilityToggle } from "@/components/admin/food-menu/AvailabilityToggle";
 import { ConfirmButton } from "@/components/admin/rooms/ConfirmButton";
+import { CmsImage } from "@/components/public/CmsImage";
 import { db } from "@/lib/db";
 import { formatNPR } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -116,11 +117,12 @@ export default async function AdminFoodMenuPage({
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
                       {item.imageUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <CmsImage
                           src={item.imageUrl}
                           alt=""
-                          className="size-11 shrink-0 rounded-lg border border-charcoal/10 object-cover"
+                          sizes="44px"
+                          className="size-11 shrink-0 rounded-lg border border-charcoal/10"
+                          iconClassName="size-4"
                         />
                       ) : (
                         <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-pine/10 text-pine">

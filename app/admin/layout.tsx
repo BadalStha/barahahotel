@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
+
 import { AdminShell } from "@/components/admin/AdminShell";
 import { auth } from "@/lib/auth";
+
+// The admin is also excluded from crawling via robots.ts (disallow /admin)
+// and from the sitemap — the meta tag is belt-and-suspenders.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminLayout({
   children,

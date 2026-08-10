@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 import { ImagePlus, Link2, Trash2 } from "lucide-react";
-import { CldUploadWidget } from "next-cloudinary";
 
+import { ImageUploadButton } from "@/components/admin/ImageUploadButton";
 import { inputClass } from "@/components/admin/fields";
 import { cn } from "@/lib/utils";
-
-const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
 export function SingleImageField({
   value,
@@ -19,6 +17,7 @@ export function SingleImageField({
   folder?: string;
 }) {
   const [urlInput, setUrlInput] = useState("");
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   function addUrl() {
     const url = urlInput.trim();
@@ -53,32 +52,14 @@ export function SingleImageField({
       )}
 
       <div className="flex flex-wrap items-center gap-2">
-        {CLOUD_NAME ? (
-          <CldUploadWidget
-            signatureEndpoint="/api/cloudinary/sign"
-            options={{ multiple: false, folder }}
-            onSuccess={(result) => {
-              if (
-                result.event === "success" &&
-                typeof result.info === "object" &&
-                result.info?.secure_url
-              ) {
-                onChange(result.info.secure_url);
-              }
-            }}
-          >
-            {({ open }) => (
-              <button
-                type="button"
-                onClick={() => open()}
-                className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-pine/30 px-4 text-sm font-medium text-pine transition-colors hover:bg-pine/10"
-              >
-                <ImagePlus className="size-4" />
-                Upload
-              </button>
-            )}
-          </CldUploadWidget>
-        ) : null}
+        <ImageUploadButton
+          folder={folder}
+          onUploaded={([url]) => {
+            setUploadError(null);
+            onChange(url);
+          }}
+          onError={setUploadError}
+        />
 
         <input
           value={urlInput}
@@ -101,6 +82,10 @@ export function SingleImageField({
           Add
         </button>
       </div>
+
+      {uploadError ? (
+        <p className="text-xs font-medium text-terracotta">{uploadError}</p>
+      ) : null}
     </div>
   );
 }

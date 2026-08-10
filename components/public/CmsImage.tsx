@@ -8,10 +8,11 @@ import { optimizeCloudinaryUrl } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 /**
- * CMS images can point anywhere (local seed paths, Cloudinary, pasted URLs)
- * and may be missing — this component renders a `next/image` (fill + sizes)
- * and swaps a broken/missing image for a styled placeholder so cards never
- * show a broken-image icon. Cloudinary URLs get f_auto,q_auto appended.
+ * CMS images can point anywhere (local seed paths, Vercel Blob, Cloudinary,
+ * pasted URLs) and may be missing — this component renders a `next/image`
+ * (fill + sizes) and swaps a broken/missing image for a styled placeholder
+ * so cards never show a broken-image icon. Legacy Cloudinary URLs get
+ * f_auto,q_auto appended; Blob URLs pass through unchanged.
  *
  * `className` is applied to the positioned wrapper — pass an aspect-ratio
  * (e.g. `aspect-[16/9] w-full`), a fixed height (e.g. `h-48 w-full`), or
