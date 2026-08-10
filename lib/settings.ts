@@ -24,6 +24,15 @@ export async function getSiteSettings(): Promise<Record<string, unknown>> {
   return settings;
 }
 
+/** Read a single setting as a string with a fallback (missing/non-string → fallback). */
+export function getSetting(
+  settings: Record<string, unknown>,
+  key: string,
+  fallback = "",
+): string {
+  return typeof settings[key] === "string" ? (settings[key] as string) : fallback;
+}
+
 /** The configured invoice tax rate (percent), falling back to the default. */
 export async function getTaxRate(): Promise<number> {
   const settings = await getSiteSettings();

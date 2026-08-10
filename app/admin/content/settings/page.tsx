@@ -2,13 +2,16 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 import { SettingsForm } from "@/components/admin/content/SettingsForm";
-import { DEFAULT_TAX_RATE, getSiteSettings } from "@/lib/settings";
+import {
+  DEFAULT_TAX_RATE,
+  getSetting,
+  getSiteSettings,
+} from "@/lib/settings";
 
 export default async function AdminContentSettingsPage() {
   const settings = await getSiteSettings();
 
-  const str = (key: string, fallback = "") =>
-    typeof settings[key] === "string" ? (settings[key] as string) : fallback;
+  const str = (key: string, fallback = "") => getSetting(settings, key, fallback);
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
@@ -50,6 +53,17 @@ export default async function AdminContentSettingsPage() {
             heroTitle: str("homepage_hero_title"),
             heroSubtitle: str("homepage_hero_subtitle"),
             heroImage: str("homepage_hero_image"),
+            uspTitle: str("homepage_usp_title"),
+            uspSubtitle: str("homepage_usp_subtitle"),
+            usp1Title: str("homepage_usp_1_title"),
+            usp1Text: str("homepage_usp_1_text"),
+            usp2Title: str("homepage_usp_2_title"),
+            usp2Text: str("homepage_usp_2_text"),
+            usp3Title: str("homepage_usp_3_title"),
+            usp3Text: str("homepage_usp_3_text"),
+            viewpointTitle: str("homepage_viewpoint_title"),
+            viewpointText: str("homepage_viewpoint_text"),
+            viewpointImage: str("homepage_viewpoint_image"),
           }}
         />
       </div>

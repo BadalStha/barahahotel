@@ -4,10 +4,14 @@ import type { Metadata } from "next";
 import { ArrowLeft, BedDouble, Ruler, Users } from "lucide-react";
 
 import { BookingWidget } from "@/components/public/BookingWidget";
+import { CmsImage } from "@/components/public/CmsImage";
+import { RoomCard } from "@/components/public/RoomCard";
 import { Container } from "@/components/ui/Container";
 import { MountainDivider } from "@/components/ui/SectionHeading";
 import { db } from "@/lib/db";
 import { formatNPR } from "@/lib/format";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -21,7 +25,7 @@ export async function generateMetadata({
   });
   if (!roomType) return { title: "Room not found" };
   return {
-    title: `${roomType.name} — Baraha Hotel and Lodge`,
+    title: roomType.name,
     description:
       roomType.description ??
       `Book the ${roomType.name} at Baraha Hotel and Lodge, Bhedetar, Dhankuta.`,
@@ -34,12 +38,22 @@ export default async function PublicRoomDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const roomType = await db.roomType.findUnique({
-    where: { slug },
-    include: {
-      images: { orderBy: { sortOrder: "asc" } },
-    },
-  });
+  const [roomType, otherRooms] = await Promise.all([
+    db.roomType.findUnique({
+      where: { slug },
+      include: {
+        images: { orderBy: { sortOrder: "asc" } },
+      },
+    }),
+    db.roomType.findMany({
+      where: { isActive: true, slug: { not: slug } },
+      orderBy: { basePrice: "asc" },
+      take: 3,
+      include: {
+        images: { orderBy: { sortOrder: "asc" }, take: 1 },
+      },
+    }),
+  ]);
   if (!roomType || !roomType.isActive) notFound();
 
   return (
@@ -69,24 +83,24 @@ export default async function PublicRoomDetailPage({
                 </span>
               ) : null}
               <span className="flex items-center gap-1.5 font-semibold text-pine">
-                <BedDouble className="size-4" /> {formatNPR(Number(roomType.basePrice))} / night
+                <BedDouble className="size-4" />{" "}
+                {formatNPR(Number(roomType.basePrice))} / night
               </span>
             </div>
             <MountainDivider className="mt-4" />
 
             {roomType.images.length > 0 ? (
               <div className="mt-6 flex flex-col gap-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={roomType.images[0].url}
-                  alt={roomType.images[0].altText ?? roomType.name}
+                <CmsImage
+                  src={roomType.images[0]?.url}
+                  alt={roomType.images[0]?.altText ?? roomType.name}
                   className="aspect-[16/9] w-full rounded-2xl border border-pine/15 object-cover shadow-[0_14px_32px_-16px_rgba(43,38,32,0.35)]"
+                  priority
                 />
                 {roomType.images.length > 1 ? (
                   <div className="flex gap-3 overflow-x-auto pb-1">
                     {roomType.images.slice(1).map((img) => (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <CmsImage
                         key={img.id}
                         src={img.url}
                         alt={img.altText ?? ""}
@@ -139,6 +153,33 @@ export default async function PublicRoomDetailPage({
             </p>
           </aside>
         </div>
+
+        {otherRooms.length > 0 ? (
+          <div className="mt-16">
+            <h2 className="font-display text-2xl text-charcoal">Other rooms</h2>
+            <p className="mt-1 text-sm text-charcoal/60">
+              See what else we have to offer.
+            </p>
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {otherRooms.map((room) => (
+                <RoomCard
+                  key={room.id}
+                  room={{
+                    slug: room.slug,
+                    name: room.name,
+                    description: room.description,
+                    basePrice: Number(room.basePrice),
+                    maxOccupancy: room.maxOccupancy,
+                    sizeSqft: room.sizeSqft,
+                    amenities: room.amenities,
+                    imageUrl: room.images[0]?.url,
+                    imageAlt: room.images[0]?.altText,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        ) : null}
       </Container>
     </div>
   );

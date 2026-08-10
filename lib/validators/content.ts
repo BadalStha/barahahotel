@@ -31,6 +31,19 @@ export const siteSettingsSchema = z.object({
   heroTitle: optionalString(200),
   heroSubtitle: optionalString(500),
   heroImage: optionalString(500),
+  // Homepage USP section (three cards — icons are fixed per slot)
+  uspTitle: optionalString(200),
+  uspSubtitle: optionalString(500),
+  usp1Title: optionalString(120),
+  usp1Text: optionalString(500),
+  usp2Title: optionalString(120),
+  usp2Text: optionalString(500),
+  usp3Title: optionalString(120),
+  usp3Text: optionalString(500),
+  // Homepage viewpoint highlight
+  viewpointTitle: optionalString(200),
+  viewpointText: optionalString(1000),
+  viewpointImage: optionalString(500),
 });
 
 export type SiteSettingsInput = z.input<typeof siteSettingsSchema>;
@@ -98,6 +111,18 @@ export const blogPostSchema = z.object({
 
 export type BlogPostInput = z.input<typeof blogPostSchema>;
 export type BlogPostValues = z.output<typeof blogPostSchema>;
+
+// ── Public contact form ──────────────────────────────────────────
+
+export const contactMessageSchema = z.object({
+  name: z.string().trim().min(2, "Enter your name").max(100),
+  email: z.string().trim().toLowerCase().email("Enter a valid email"),
+  phone: z.string().trim().max(30).optional().or(z.literal("")),
+  message: z.string().trim().min(10, "Message is a bit short").max(2000),
+});
+
+export type ContactMessageInput = z.input<typeof contactMessageSchema>;
+export type ContactMessageValues = z.output<typeof contactMessageSchema>;
 
 // ── Testimonials ─────────────────────────────────────────────────
 

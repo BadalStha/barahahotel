@@ -40,6 +40,17 @@ const SETTING_KEY_MAP: Record<string, string> = {
   heroTitle: "homepage_hero_title",
   heroSubtitle: "homepage_hero_subtitle",
   heroImage: "homepage_hero_image",
+  uspTitle: "homepage_usp_title",
+  uspSubtitle: "homepage_usp_subtitle",
+  usp1Title: "homepage_usp_1_title",
+  usp1Text: "homepage_usp_1_text",
+  usp2Title: "homepage_usp_2_title",
+  usp2Text: "homepage_usp_2_text",
+  usp3Title: "homepage_usp_3_title",
+  usp3Text: "homepage_usp_3_text",
+  viewpointTitle: "homepage_viewpoint_title",
+  viewpointText: "homepage_viewpoint_text",
+  viewpointImage: "homepage_viewpoint_image",
 };
 
 export async function updateSiteSettingsAction(

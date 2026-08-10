@@ -33,6 +33,17 @@ export type SiteSettingsFormData = {
   heroTitle: string;
   heroSubtitle: string;
   heroImage: string;
+  uspTitle: string;
+  uspSubtitle: string;
+  usp1Title: string;
+  usp1Text: string;
+  usp2Title: string;
+  usp2Text: string;
+  usp3Title: string;
+  usp3Text: string;
+  viewpointTitle: string;
+  viewpointText: string;
+  viewpointImage: string;
 };
 
 const textareaClass =
@@ -61,6 +72,17 @@ export function SettingsForm({ settings }: { settings: SiteSettingsFormData }) {
     heroTitle: settings.heroTitle,
     heroSubtitle: settings.heroSubtitle,
     heroImage: settings.heroImage,
+    uspTitle: settings.uspTitle,
+    uspSubtitle: settings.uspSubtitle,
+    usp1Title: settings.usp1Title,
+    usp1Text: settings.usp1Text,
+    usp2Title: settings.usp2Title,
+    usp2Text: settings.usp2Text,
+    usp3Title: settings.usp3Title,
+    usp3Text: settings.usp3Text,
+    viewpointTitle: settings.viewpointTitle,
+    viewpointText: settings.viewpointText,
+    viewpointImage: settings.viewpointImage,
   };
 
   const {
@@ -75,6 +97,7 @@ export function SettingsForm({ settings }: { settings: SiteSettingsFormData }) {
   });
 
   const heroImage = useWatch({ control, name: "heroImage" }) ?? "";
+  const viewpointImage = useWatch({ control, name: "viewpointImage" }) ?? "";
 
   function onSubmit(values: SiteSettingsInput) {
     setError(null);
@@ -260,6 +283,103 @@ export function SettingsForm({ settings }: { settings: SiteSettingsFormData }) {
           <SingleImageField
             value={heroImage}
             onChange={(url) => setValue("heroImage", url, { shouldValidate: true })}
+            folder="baraha-hotel/hero"
+          />
+        </Field>
+      </section>
+
+      {/* Why stay with us — three cards */}
+      <section className="flex flex-col gap-5">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-charcoal/50">
+          Homepage — why stay with us
+        </h2>
+        <div className="grid gap-5 md:grid-cols-2">
+          <Field label="Section title" error={errors.uspTitle?.message}>
+            <input
+              {...register("uspTitle")}
+              placeholder="Why stay with us"
+              className={cn(inputClass, errors.uspTitle && inputErrorClass)}
+            />
+          </Field>
+          <Field
+            label="Section subtitle"
+            error={errors.uspSubtitle?.message}
+            className="md:col-span-2"
+          >
+            <textarea
+              {...register("uspSubtitle")}
+              rows={2}
+              placeholder="A short line under the heading…"
+              className={cn(textareaClass, errors.uspSubtitle && inputErrorClass)}
+            />
+          </Field>
+        </div>
+        <div className="grid gap-5 lg:grid-cols-3">
+          {([1, 2, 3] as const).map((n) => (
+            <div
+              key={n}
+              className="flex flex-col gap-4 rounded-xl border border-charcoal/10 p-4"
+            >
+              <p className="text-xs font-semibold uppercase tracking-wider text-charcoal/40">
+                Card {n}
+              </p>
+              <Field
+                label={`Title ${n}`}
+                error={errors[`usp${n}Title` as const]?.message}
+              >
+                <input
+                  {...register(`usp${n}Title` as const)}
+                  placeholder={n === 1 ? "Mountain views" : n === 2 ? "Home-style food" : "Free WiFi"}
+                  className={cn(inputClass, errors[`usp${n}Title` as const] && inputErrorClass)}
+                />
+              </Field>
+              <Field label={`Text ${n}`} error={errors[`usp${n}Text` as const]?.message}>
+                <textarea
+                  {...register(`usp${n}Text` as const)}
+                  rows={3}
+                  placeholder="What makes this promise true?"
+                  className={cn(textareaClass, errors[`usp${n}Text` as const] && inputErrorClass)}
+                />
+              </Field>
+            </div>
+          ))}
+        </div>
+        <p className="text-xs text-charcoal/50">
+          Icons are fixed per card (views, dining, connectivity) — the text is
+          yours to edit.
+        </p>
+      </section>
+
+      {/* Viewpoint highlight */}
+      <section className="flex flex-col gap-5">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-charcoal/50">
+          Homepage — viewpoint highlight
+        </h2>
+        <div className="grid gap-5 md:grid-cols-2">
+          <Field label="Title" error={errors.viewpointTitle?.message}>
+            <input
+              {...register("viewpointTitle")}
+              placeholder="The Bhedetar viewpoint"
+              className={cn(inputClass, errors.viewpointTitle && inputErrorClass)}
+            />
+          </Field>
+          <Field
+            label="Text"
+            error={errors.viewpointText?.message}
+            className="md:col-span-2"
+          >
+            <textarea
+              {...register("viewpointText")}
+              rows={4}
+              placeholder="Describe the viewpoint experience…"
+              className={cn(textareaClass, errors.viewpointText && inputErrorClass)}
+            />
+          </Field>
+        </div>
+        <Field label="Image" error={errors.viewpointImage?.message}>
+          <SingleImageField
+            value={viewpointImage}
+            onChange={(url) => setValue("viewpointImage", url, { shouldValidate: true })}
             folder="baraha-hotel/hero"
           />
         </Field>

@@ -126,6 +126,17 @@ const siteSettings = [
   { key: "homepage_hero_title", value: "Wake up to the Himalayas" },
   { key: "homepage_hero_subtitle", value: "Quiet rooms, mountain views, and home-style food at a hill-station retreat in Bhedetar, Dhankuta." },
   { key: "homepage_hero_image", value: "/images/rooms/deluxe-1.jpg" },
+  { key: "homepage_usp_title", value: "Why stay at Baraha" },
+  { key: "homepage_usp_subtitle", value: "Small comforts that make a big difference after a day on the hills." },
+  { key: "homepage_usp_1_title", value: "Mountain views" },
+  { key: "homepage_usp_1_text", value: "Wake to the Dhankuta ridgeline from a private balcony or garden-facing window." },
+  { key: "homepage_usp_2_title", value: "Home-style dining" },
+  { key: "homepage_usp_2_text", value: "Dal bhat, gundruk soup, and fresh local oranges — food cooked the way we cook at home." },
+  { key: "homepage_usp_3_title", value: "Free WiFi & hot water" },
+  { key: "homepage_usp_3_text", value: "Fast WiFi in every room and reliable hot water — the essentials, done properly." },
+  { key: "homepage_viewpoint_title", value: "The Bhedetar viewpoint" },
+  { key: "homepage_viewpoint_text", value: "Ten minutes from the hotel, the Bhedetar viewpoint drops away to the Terai plains below. On clear mornings the whole of the Koshi valley unfolds at your feet — bring a camera and a cup of chiya." },
+  { key: "homepage_viewpoint_image", value: "/images/rooms/deluxe-2.jpg" },
 ];
 
 const pageSeeds = [
