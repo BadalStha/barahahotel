@@ -8,16 +8,7 @@ import { CalendarCheck, Menu, Mountain, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { cn } from "@/lib/utils";
 
-export const PUBLIC_NAV = [
-  { label: "Home", href: "/" },
-  { label: "Rooms", href: "/rooms" },
-  { label: "Dining", href: "/dining" },
-  { label: "Amenities", href: "/amenities" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "About", href: "/about" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
-];
+import { PUBLIC_NAV } from "./nav";
 
 /** Header nav — the logo already links home, so drop the Home item. */
 const HEADER_NAV = PUBLIC_NAV.filter((item) => item.href !== "/");

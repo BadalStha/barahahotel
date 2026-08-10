@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Clock, Globe, Mail, MapPin, Mountain, Phone } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
-import { PUBLIC_NAV } from "./Header";
+
+import { PUBLIC_NAV } from "./nav";
 
 export type FooterSettings = {
   hotelName: string;
