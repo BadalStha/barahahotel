@@ -111,10 +111,94 @@ const foodItemSeeds: FoodItemSeed[] = [
 
 const siteSettings = [
   { key: "hotel_name", value: "Baraha Hotel and Lodge" },
+  { key: "tagline", value: "A Himalayan hill-station retreat in Bhedetar, Dhankuta" },
   { key: "location", value: "Bhedetar, Dhankuta, Nepal" },
   { key: "phone", value: "+977-00-0000000" },
   { key: "email", value: "info@barahahotel.com" },
-  { key: "invoice_tax_rate", value: 13 }, // Nepal VAT %, configurable in the invoice screen
+  { key: "social_facebook", value: "https://facebook.com/barahahotel" },
+  { key: "social_instagram", value: "https://instagram.com/barahahotel" },
+  { key: "social_twitter", value: "" },
+  { key: "social_youtube", value: "" },
+  { key: "business_hours", value: "Mon–Sun: 6:00 AM – 10:00 PM" },
+  { key: "check_in_time", value: "2:00 PM" },
+  { key: "check_out_time", value: "12:00 PM" },
+  { key: "invoice_tax_rate", value: 13 }, // Nepal VAT %, editable in Content → Site settings
+  { key: "homepage_hero_title", value: "Wake up to the Himalayas" },
+  { key: "homepage_hero_subtitle", value: "Quiet rooms, mountain views, and home-style food at a hill-station retreat in Bhedetar, Dhankuta." },
+  { key: "homepage_hero_image", value: "/images/rooms/deluxe-1.jpg" },
+];
+
+const pageSeeds = [
+  {
+    slug: "about",
+    title: "About Us",
+    metaTitle: "About Baraha Hotel and Lodge",
+    metaDescription: "Learn about Baraha Hotel and Lodge, a family-run hill-station retreat in Bhedetar, Dhankuta.",
+    blocks: [
+      { type: "heading", text: "Welcome to Baraha", url: "", alt: "" },
+      { type: "paragraph", text: "Baraha Hotel and Lodge sits on the ridgeline at Bhedetar, where the Terai plains rise into the Dhankuta hills. We've been welcoming travellers, trekkers, and families for years with warm rooms, mountain views, and food cooked the way we cook at home.", url: "", alt: "" },
+      { type: "heading", text: "Our story", url: "", alt: "" },
+      { type: "paragraph", text: "What started as a small roadside lodge has grown into a full-service hotel, while staying true to its roots: honest hospitality, local ingredients, and a cup of chiya ready whenever you land.", url: "", alt: "" },
+      { type: "image", text: "", url: "/images/rooms/standard-1.jpg", alt: "The Baraha Hotel garden" },
+    ],
+  },
+  {
+    slug: "amenities",
+    title: "Amenities",
+    metaTitle: "Amenities at Baraha Hotel and Lodge",
+    metaDescription: "Rooms, dining, WiFi, and more — see what's included with your stay at Baraha Hotel and Lodge.",
+    blocks: [
+      { type: "heading", text: "Comforts of home, views of the hills", url: "", alt: "" },
+      { type: "paragraph", text: "Every room comes with free WiFi, hot water, and a writing desk. Deluxe rooms add private balconies; our family suites include a living room and kitchenette.", url: "", alt: "" },
+      { type: "heading", text: "Dining", url: "", alt: "" },
+      { type: "paragraph", text: "Our kitchen serves dal bhat, Nepali breakfast sets, and Dhankuta specialities like gundruk soup and mutton sekuwa — plus fresh local oranges in season.", url: "", alt: "" },
+      { type: "image", text: "", url: "/images/food/dal-bhat.jpg", alt: "Dal bhat at the hotel restaurant" },
+    ],
+  },
+];
+
+const gallerySeeds = [
+  { url: "/images/rooms/standard-1.jpg", altText: "Standard room with a double bed", category: "Rooms", sortOrder: 0 },
+  { url: "/images/rooms/deluxe-1.jpg", altText: "Deluxe room balcony at sunrise", category: "Rooms", sortOrder: 1 },
+  { url: "/images/rooms/suite-1.jpg", altText: "Family suite living room", category: "Rooms", sortOrder: 2 },
+  { url: "/images/food/dal-bhat.jpg", altText: "Dal bhat with seasonal vegetables", category: "Dining", sortOrder: 3 },
+  { url: "/images/food/sekuwa.jpg", altText: "Mutton sekuwa with chutney", category: "Dining", sortOrder: 4 },
+];
+
+const blogSeeds = [
+  {
+    slug: "day-trip-dhankuta-bazaar",
+    title: "A day trip to Dhankuta bazaar",
+    excerpt: "Half an hour from the hotel, the old bazaar town of Dhankuta is worth a morning.",
+    content: "From Bhedetar it's a short drive up the hill to Dhankuta. The bazaar is best visited early, when vendors set out fresh vegetables, handwoven dhaka, and the day's first plates of sel roti.\n\nSpend the afternoon wandering the temple steps and the covered market, then come back to the hotel in time for tea on the balcony.",
+    coverImageUrl: "/images/food/sel-roti.jpg",
+    isPublished: true,
+    daysAgo: 3,
+  },
+  {
+    slug: "what-to-eat-in-bhedetar",
+    title: "What to eat in Bhedetar",
+    excerpt: "From gundruk soup to fresh orange juice — the flavours of the Dhankuta hills.",
+    content: "The hills around Bhedetar grow oranges, and in season the juice is as good as it gets. For dinner, try gundruk soup with rice or char-grilled mutton sekuwa.\n\nBreakfast means sel roti and aloo tama with a pot of milk tea — the way the trekking crowds like it.",
+    coverImageUrl: "/images/food/gundruk-soup.jpg",
+    isPublished: true,
+    daysAgo: 10,
+  },
+  {
+    slug: "planning-your-trek",
+    title: "Planning your trek from Bhedetar",
+    excerpt: "A few notes for trekkers starting the Dhankuta–Hile route from our doorstep.",
+    content: "Bhedetar is the traditional gateway to the eastern hills. If you're planning a trek toward Hile or further into the Koshi zone, the hotel can help you arrange transport, packed lunches, and an early start.\n\nCome prepared for steep climbs in the afternoon heat — and bring a light jacket for the evenings.",
+    coverImageUrl: "/images/rooms/deluxe-2.jpg",
+    isPublished: false,
+    daysAgo: 2,
+  },
+];
+
+const testimonialSeeds = [
+  { guestName: "Sita Rai", quote: "Clean rooms, hot water, and the best chiya in Bhedetar. We'll be back.", rating: 5 },
+  { guestName: "Hari Tamang", quote: "The staff went out of their way to help us plan our trek. Felt like family.", rating: 5 },
+  { guestName: "Anju Gurung", quote: "Quiet, comfortable, and the dal bhat was superb. A great stop on the way to Dhankuta.", rating: 4 },
 ];
 
 const roomSeeds = [
@@ -219,6 +303,48 @@ async function main() {
     });
   }
 
+  // 4b. Pages (About, Amenities) — upsert by unique slug
+  for (const seed of pageSeeds) {
+    const { blocks, ...data } = seed;
+    await prisma.page.upsert({
+      where: { slug: seed.slug },
+      update: { ...data, content: blocks },
+      create: { ...data, content: blocks },
+    });
+  }
+
+  // 4c. Gallery images (refresh demo photos, keyed by URL)
+  await prisma.galleryImage.deleteMany();
+  await prisma.galleryImage.createMany({ data: gallerySeeds });
+
+  // 4d. Blog posts (upsert by unique slug)
+  for (const seed of blogSeeds) {
+    const { daysAgo, ...data } = seed;
+    await prisma.blogPost.upsert({
+      where: { slug: seed.slug },
+      update: {
+        ...data,
+        publishedAt: seed.isPublished ? atNoon(-daysAgo) : null,
+      },
+      create: {
+        ...data,
+        publishedAt: seed.isPublished ? atNoon(-daysAgo) : null,
+      },
+    });
+  }
+
+  // 4e. Testimonials (upsert by guest name — demo data)
+  for (const t of testimonialSeeds) {
+    const existing = await prisma.testimonial.findFirst({
+      where: { guestName: t.guestName },
+    });
+    if (existing) {
+      await prisma.testimonial.update({ where: { id: existing.id }, data: t });
+    } else {
+      await prisma.testimonial.create({ data: t });
+    }
+  }
+
   // 5. Rooms
   for (const r of roomSeeds) {
     const roomType = await prisma.roomType.findUnique({ where: { slug: r.slug } });
@@ -294,7 +420,7 @@ async function main() {
   }
 
   // 9. Report
-  const [roomTypeCount, foodCount, imageCount, roomCount, guestCount, bookingCount, orderCount] =
+  const [roomTypeCount, foodCount, imageCount, roomCount, guestCount, bookingCount, orderCount, pageCount, galleryCount, blogCount, testimonialCount] =
     await Promise.all([
       prisma.roomType.count(),
       prisma.foodMenuItem.count(),
@@ -303,6 +429,10 @@ async function main() {
       prisma.guest.count(),
       prisma.booking.count(),
       prisma.foodOrder.count(),
+      prisma.page.count(),
+      prisma.galleryImage.count(),
+      prisma.blogPost.count(),
+      prisma.testimonial.count(),
     ]);
 
   console.log("Seed complete:");
@@ -315,6 +445,10 @@ async function main() {
   console.log(`  • Bookings   : ${bookingCount} (demo stays with dynamic dates)`);
   console.log(`  • Food orders: ${orderCount} (this month, for dashboard revenue)`);
   console.log(`  • Settings   : ${siteSettings.length} (${siteSettings.map((s) => s.key).join(", ")})`);
+  console.log(`  • Pages      : ${pageCount} (${pageSeeds.map((p) => p.slug).join(", ")})`);
+  console.log(`  • Gallery    : ${galleryCount} photos`);
+  console.log(`  • Blog posts : ${blogCount} (${blogSeeds.filter((b) => b.isPublished).length} published)`);
+  console.log(`  • Testimonials: ${testimonialCount}`);
 }
 
 main()

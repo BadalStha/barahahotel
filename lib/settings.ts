@@ -36,9 +36,29 @@ export async function getTaxRate(): Promise<number> {
 
 /** Persists the invoice tax rate as a SiteSetting (upsert). */
 export async function setTaxRate(rate: number): Promise<void> {
+  await setSiteSetting(TAX_RATE_SETTING_KEY, rate);
+}
+
+/** Upserts a single SiteSetting (value is JSON-encoded automatically). */
+export async function setSiteSetting(key: string, value: unknown): Promise<void> {
   await db.siteSetting.upsert({
-    where: { key: TAX_RATE_SETTING_KEY },
-    update: { value: JSON.stringify(rate) },
-    create: { key: TAX_RATE_SETTING_KEY, value: JSON.stringify(rate) },
+    where: { key },
+    update: { value: JSON.stringify(value) },
+    create: { key, value: JSON.stringify(value) },
   });
+}
+
+/** Upserts many SiteSettings in one transaction. */
+export async function setSiteSettings(
+  entries: Record<string, unknown>,
+): Promise<void> {
+  await db.$transaction(
+    Object.entries(entries).map(([key, value]) =>
+      db.siteSetting.upsert({
+        where: { key },
+        update: { value: JSON.stringify(value) },
+        create: { key, value: JSON.stringify(value) },
+      }),
+    ),
+  );
 }

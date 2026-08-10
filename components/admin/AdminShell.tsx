@@ -56,7 +56,7 @@ const NAV_SECTIONS: {
   },
   {
     label: "System",
-    items: [{ label: "Settings", href: "/admin/settings", icon: Settings }],
+    items: [{ label: "Settings", href: "/admin/content/settings", icon: Settings }],
   },
 ];
 
