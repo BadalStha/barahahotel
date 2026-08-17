@@ -29,7 +29,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/dining` },
     { url: `${base}/blog` },
     { url: `${base}/contact` },
-    { url: `${base}/booking` },
   ];
 
   const roomRoutes: MetadataRoute.Sitemap = rooms.map((room) => ({

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft, BedDouble, Ruler, Users } from "lucide-react";
 
-import { BookingWidget } from "@/components/public/BookingWidget";
+import { EnquireCard } from "@/components/public/EnquireCard";
 import { CmsImage } from "@/components/public/CmsImage";
 import { JsonLd } from "@/components/public/JsonLd";
 import { RoomCard } from "@/components/public/RoomCard";
@@ -32,10 +32,10 @@ export async function generateMetadata({
     select: { name: true, description: true },
   });
   if (!roomType) return { title: "Room not found" };
-  const title = roomType.name;
+  const title = `${roomType.name} — Baraha Hotel and Lodge, Bhedetar`;
   const description =
     roomType.description ??
-    `Book the ${roomType.name} at Baraha Hotel and Lodge, Bhedetar, Dhankuta.`;
+    `Book the ${roomType.name} at Baraha Hotel and Lodge, a lodge in Bhedetar, Dhankuta.`;
   return {
     title,
     description,
@@ -173,15 +173,7 @@ export default async function PublicRoomDetailPage({
           </div>
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <BookingWidget
-              roomTypeSlug={roomType.slug}
-              roomTypeName={roomType.name}
-              basePrice={Number(roomType.basePrice)}
-              maxOccupancy={roomType.maxOccupancy}
-            />
-            <p className="mt-3 text-center text-xs text-charcoal/50">
-              No payment needed to reserve — we&apos;ll confirm by email.
-            </p>
+            <EnquireCard />
           </aside>
         </div>
 
@@ -221,6 +213,24 @@ export default async function PublicRoomDetailPage({
             { name: roomType.name, path: `/rooms/${roomType.slug}` },
           ]),
           productJsonLd,
+          {
+            "@context": "https://schema.org",
+            "@type": "LodgingBusiness",
+            name: "Baraha Hotel and Lodge",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "Bhedetar, Dhankuta, Nepal",
+              addressLocality: "Bhedetar",
+              addressRegion: "Dhankuta",
+              addressCountry: "NP",
+            },
+            geo: {
+              "@type": "GeoCoordinates",
+              latitude: 26.9357,
+              longitude: 87.2822,
+            },
+            priceRange: `NPR ${Number(roomType.basePrice)} / night`,
+          },
         ]}
       />
     </div>

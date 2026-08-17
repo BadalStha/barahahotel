@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
   });
 
-  const title = "Rooms & Suites";
+  const title = "Rooms & Suites — Lodge in Bhedetar, Dhankuta";
   const description =
     "Standard, deluxe and family rooms at Baraha Hotel and Lodge in Bhedetar, Dhankuta — prices per night, max occupancy and amenities.";
 

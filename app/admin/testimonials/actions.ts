@@ -74,12 +74,12 @@ export async function toggleTestimonialPublishedAction(
   return {};
 }
 
-export async function deleteTestimonialAction(id: string): Promise<ActionResult> {
+export async function deleteTestimonialAction(id: string): Promise<void> {
   const existing = await db.testimonial.findUnique({
     where: { id },
     select: { id: true },
   });
-  if (!existing) return { error: "Testimonial not found." };
+  if (!existing) throw new Error("Testimonial not found.");
 
   await db.testimonial.delete({ where: { id } });
   revalidatePath("/admin/testimonials");

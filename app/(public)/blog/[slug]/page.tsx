@@ -30,10 +30,10 @@ export async function generateMetadata({
   const title = post.metaTitle ?? post.title;
   const description = post.metaDescription ?? post.excerpt ?? undefined;
   return {
-    title,
+    title: `${title} — Baraha Hotel and Lodge, Bhedetar`,
     description,
     ...socialMetadata({
-      title,
+      title: `${title} — Baraha Hotel and Lodge, Bhedetar`,
       description,
       path: `/blog/${post.slug}`,
       image: post.coverImageUrl,

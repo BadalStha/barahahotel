@@ -7,7 +7,7 @@ import { getTaxRate, setTaxRate } from "@/lib/settings";
 export type InvoiceTotals = {
   nights: number;
   roomTotal: number;
-  foodTotal: number;
+  chargeTotal: number;
   taxableSubtotal: number;
   taxRate: number;
   taxAmount: number;
@@ -15,12 +15,13 @@ export type InvoiceTotals = {
   grandTotal: number;
 };
 
-export type BookingForInvoice = {
+export type RoomEntryForInvoice = {
   checkIn: Date;
-  checkOut: Date;
-  roomRateAtBooking: Prisma.Decimal;
-  foodOrders: {
-    items: { quantity: number; priceAtOrder: Prisma.Decimal }[];
+  checkOut: Date | null;
+  ratePerNight: Prisma.Decimal;
+  charges: {
+    quantity: number;
+    priceAtAdd: Prisma.Decimal;
   }[];
 };
 
@@ -36,33 +37,26 @@ function toDecimal(value: number): Prisma.Decimal {
 /**
  * Pure calculation shared by the invoice page and invoice generation:
  *
- *   roomTotal = nights × roomRateAtBooking        (snapshot from booking)
- *   foodTotal = Σ quantity × priceAtOrder         (snapshot per order item)
- *   taxAmount = (roomTotal + foodTotal) × taxRate%
- *   grandTotal = roomTotal + foodTotal + tax − discount
+ *   roomTotal = nights × ratePerNight            (snapshot from room entry)
+ *   chargeTotal = Σ quantity × priceAtAdd        (snapshot per room charge)
+ *   taxAmount = (roomTotal + chargeTotal) × taxRate%
+ *   grandTotal = roomTotal + chargeTotal + tax − discount
  */
 export function computeInvoiceTotals(
-  booking: BookingForInvoice,
+  roomEntry: RoomEntryForInvoice,
   taxRate: number,
   discountAmount = 0,
 ): InvoiceTotals {
-  const nights = Math.max(
-    1,
-    differenceInCalendarDays(booking.checkOut, booking.checkIn),
-  );
-  const roomTotal = round2(Number(booking.roomRateAtBooking) * nights);
-  const foodTotal = round2(
-    booking.foodOrders.reduce(
-      (sum, order) =>
-        sum +
-        order.items.reduce(
-          (s, item) => s + Number(item.priceAtOrder) * item.quantity,
-          0,
-        ),
+  const checkOut = roomEntry.checkOut ?? new Date(roomEntry.checkIn.getTime() + 86400000);
+  const nights = Math.max(1, differenceInCalendarDays(checkOut, roomEntry.checkIn));
+  const roomTotal = round2(Number(roomEntry.ratePerNight) * nights);
+  const chargeTotal = round2(
+    roomEntry.charges.reduce(
+      (sum, charge) => sum + Number(charge.priceAtAdd) * charge.quantity,
       0,
     ),
   );
-  const taxableSubtotal = round2(roomTotal + foodTotal);
+  const taxableSubtotal = round2(roomTotal + chargeTotal);
   const taxAmount = round2((taxableSubtotal * taxRate) / 100);
   const discount = round2(Math.max(0, discountAmount));
   const grandTotal = round2(taxableSubtotal + taxAmount - discount);
@@ -70,7 +64,7 @@ export function computeInvoiceTotals(
   return {
     nights,
     roomTotal,
-    foodTotal,
+    chargeTotal,
     taxableSubtotal,
     taxRate,
     taxAmount,
@@ -87,19 +81,19 @@ type GenerateInvoiceOptions = {
 };
 
 /**
- * Calculates and stores (upsert) a booking's Invoice record.
+ * Calculates and stores (upsert) a room entry's Invoice record.
  * Recalculating never wipes manual data: the existing discount is preserved
  * unless one is passed in, and payment fields are left untouched.
  */
 export async function generateInvoice(
-  bookingId: string,
+  roomEntryId: string,
   options: GenerateInvoiceOptions = {},
-): Promise<{ id: string; bookingId: string }> {
-  const booking = await db.booking.findUnique({
-    where: { id: bookingId },
-    include: { foodOrders: { include: { items: true } } },
+): Promise<{ id: string; roomEntryId: string }> {
+  const roomEntry = await db.roomEntry.findUnique({
+    where: { id: roomEntryId },
+    include: { charges: true },
   });
-  if (!booking) throw new Error("Booking not found.");
+  if (!roomEntry) throw new Error("Room entry not found.");
 
   let taxRate = options.taxRate;
   if (taxRate !== undefined) {
@@ -110,31 +104,31 @@ export async function generateInvoice(
 
   let discount = options.discountAmount;
   if (discount === undefined) {
-    const existing = await db.invoice.findUnique({ where: { bookingId } });
+    const existing = await db.invoice.findUnique({ where: { roomEntryId } });
     discount = existing ? Number(existing.discountAmount) : 0;
   }
 
-  const totals = computeInvoiceTotals(booking, taxRate, discount);
+  const totals = computeInvoiceTotals(roomEntry, taxRate, discount);
 
   const invoice = await db.invoice.upsert({
-    where: { bookingId },
+    where: { roomEntryId },
     update: {
       roomTotal: toDecimal(totals.roomTotal),
-      foodTotal: toDecimal(totals.foodTotal),
+      chargeTotal: toDecimal(totals.chargeTotal),
       taxAmount: toDecimal(totals.taxAmount),
       discountAmount: toDecimal(totals.discountAmount),
       grandTotal: toDecimal(totals.grandTotal),
       generatedAt: new Date(),
     },
     create: {
-      bookingId,
+      roomEntryId,
       roomTotal: toDecimal(totals.roomTotal),
-      foodTotal: toDecimal(totals.foodTotal),
+      chargeTotal: toDecimal(totals.chargeTotal),
       taxAmount: toDecimal(totals.taxAmount),
       discountAmount: toDecimal(totals.discountAmount),
       grandTotal: toDecimal(totals.grandTotal),
     },
   });
 
-  return { id: invoice.id, bookingId: invoice.bookingId };
+  return { id: invoice.id, roomEntryId: invoice.roomEntryId };
 }

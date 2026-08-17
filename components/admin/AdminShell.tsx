@@ -5,8 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  BedDouble,
-  CalendarDays,
   FileText,
   Image as ImageIcon,
   LayoutDashboard,
@@ -15,7 +13,6 @@ import {
   Newspaper,
   Settings,
   Star,
-  Utensils,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -35,15 +32,7 @@ const NAV_SECTIONS: {
 }[] = [
   {
     label: "Overview",
-    items: [{ label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard }],
-  },
-  {
-    label: "Operations",
-    items: [
-      { label: "Bookings", href: "/admin/bookings", icon: CalendarDays },
-      { label: "Rooms", href: "/admin/rooms", icon: BedDouble },
-      { label: "Food Menu", href: "/admin/food-menu", icon: Utensils },
-    ],
+    items: [{ label: "Room board", href: "/admin/dashboard", icon: LayoutDashboard }],
   },
   {
     label: "Content",

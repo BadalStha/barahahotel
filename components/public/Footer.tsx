@@ -125,11 +125,6 @@ export function Footer({ settings }: { settings: FooterSettings }) {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link href="/booking" className="font-medium text-saffron transition-colors hover:text-saffron/80">
-                Book a stay
-              </Link>
-            </li>
           </ul>
         </div>
 
@@ -139,13 +134,13 @@ export function Footer({ settings }: { settings: FooterSettings }) {
             Ready to visit?
           </h3>
           <p className="text-sm leading-relaxed text-stone/70">
-            Check live availability and reserve your room in under a minute.
+            Call, WhatsApp, or email us to check availability and plan your stay.
           </p>
           <Link
-            href="/booking"
+            href="/contact"
             className="inline-flex items-center gap-1.5 rounded-full bg-saffron px-5 py-2.5 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
           >
-            Book Now
+            Enquire now
           </Link>
         </div>
       </Container>

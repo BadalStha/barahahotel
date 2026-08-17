@@ -133,9 +133,9 @@ export async function updatePageAction(
   }
 }
 
-export async function deletePageAction(slug: string): Promise<ActionResult> {
+export async function deletePageAction(slug: string): Promise<void> {
   const page = await db.page.findUnique({ where: { slug }, select: { id: true } });
-  if (!page) return { error: "Page not found." };
+  if (!page) throw new Error("Page not found.");
 
   await db.page.delete({ where: { id: page.id } });
   revalidatePath("/admin/content/pages");

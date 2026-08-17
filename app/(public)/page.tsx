@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowRight, Mountain, Utensils, Wifi } from "lucide-react";
 
-import { BookingWidget } from "@/components/public/BookingWidget";
 import { CmsImage } from "@/components/public/CmsImage";
+import { EnquireCard } from "@/components/public/EnquireCard";
 import { JsonLd } from "@/components/public/JsonLd";
 import { RoomCard } from "@/components/public/RoomCard";
 import { TestimonialCarousel } from "@/components/public/TestimonialCarousel";
@@ -37,10 +37,10 @@ export async function generateMetadata(): Promise<Metadata> {
     "A Himalayan hill-station retreat in Bhedetar, Dhankuta, Nepal.",
   );
   return {
-    title,
+    title: `${title} — Lodge in Bhedetar, Nepal`,
     description,
     ...socialMetadata({
-      title,
+      title: `${title} — Lodge in Bhedetar, Nepal`,
       description,
       path: "/",
       image: getSetting(settings, "homepage_hero_image") || null,
@@ -77,10 +77,9 @@ export default async function Home() {
     }))
     .filter((usp) => usp.title || usp.text);
 
-  // Bhedetar sits on the Koshi Highway at the foot of the Dhankuta hills.
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Hotel",
+    "@type": "LodgingBusiness",
     name: hotelName,
     description: str("tagline"),
     url: url("/"),
@@ -92,7 +91,9 @@ export default async function Home() {
       : undefined,
     address: {
       "@type": "PostalAddress",
-      addressLocality: str("location"),
+      streetAddress: str("location"),
+      addressLocality: "Bhedetar",
+      addressRegion: "Dhankuta",
       addressCountry: "NP",
     },
     geo: {
@@ -139,22 +140,22 @@ export default async function Home() {
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 <Link
-                  href="/booking"
+                  href="/rooms"
                   className="inline-flex h-12 items-center gap-2 rounded-full bg-saffron px-7 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
                 >
-                  Book a stay
+                  View rooms
                   <ArrowRight className="size-4" />
                 </Link>
                 <Link
-                  href="/rooms"
+                  href="/contact"
                   className="inline-flex h-12 items-center gap-2 rounded-full border border-white/30 px-7 text-sm font-semibold text-stone transition-colors hover:bg-white/10"
                 >
-                  Explore rooms
+                  Enquire now
                 </Link>
               </div>
             </div>
 
-            <BookingWidget />
+            <EnquireCard />
           </div>
         </Container>
       </section>
@@ -310,16 +311,17 @@ export default async function Home() {
               Ready for the hills?
             </h2>
             <p className="max-w-xl text-stone/80">
-              Check live availability and reserve your room — no payment needed
-              to book, we&apos;ll confirm by email.
+              Call, WhatsApp, or email us to check availability and plan your stay.
             </p>
-            <Link
-              href="/booking"
-              className="mt-2 inline-flex h-12 items-center gap-2 rounded-full bg-saffron px-8 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
-            >
-              Book your stay
-              <ArrowRight className="size-4" />
-            </Link>
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/contact"
+                className="inline-flex h-12 items-center gap-2 rounded-full bg-saffron px-8 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
+              >
+                Enquire now
+                <ArrowRight className="size-4" />
+              </Link>
+            </div>
           </div>
         </Container>
       </section>

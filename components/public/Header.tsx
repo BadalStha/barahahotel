@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CalendarCheck, Menu, Mountain, X } from "lucide-react";
+import { Menu, Mountain, X } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
 import { cn } from "@/lib/utils";
@@ -61,13 +61,6 @@ export function Header({ hotelName }: { hotelName: string }) {
               </Link>
             );
           })}
-          <Link
-            href="/booking"
-            className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-saffron px-4 py-2 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
-          >
-            <CalendarCheck className="size-4" />
-            Book Now
-          </Link>
         </nav>
 
         {/* Mobile toggle */}
@@ -107,13 +100,6 @@ export function Header({ hotelName }: { hotelName: string }) {
                 </Link>
               );
             })}
-            <Link
-              href="/booking"
-              className="mt-1 inline-flex items-center justify-center gap-1.5 rounded-full bg-saffron px-4 py-2.5 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
-            >
-              <CalendarCheck className="size-4" />
-              Book Now
-            </Link>
           </Container>
         </nav>
       ) : null}

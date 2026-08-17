@@ -118,12 +118,12 @@ export async function toggleBlogPostPublishedAction(
   return {};
 }
 
-export async function deleteBlogPostAction(slug: string): Promise<ActionResult> {
+export async function deleteBlogPostAction(slug: string): Promise<void> {
   const post = await db.blogPost.findUnique({
     where: { slug },
     select: { id: true },
   });
-  if (!post) return { error: "Post not found." };
+  if (!post) throw new Error("Post not found.");
 
   await db.blogPost.delete({ where: { id: post.id } });
   revalidatePath("/admin/blog");

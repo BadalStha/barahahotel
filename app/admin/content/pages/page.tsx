@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { FileText, Pencil, Plus } from "lucide-react";
+import { FileText, Pencil, Plus, Trash2 } from "lucide-react";
 
-import { ConfirmButton } from "@/components/admin/rooms/ConfirmButton";
 import { db } from "@/lib/db";
 import { deletePageAction } from "../actions";
 
@@ -86,10 +85,15 @@ export default async function AdminContentPagesPage() {
                         <Pencil className="size-4" />
                         Edit
                       </Link>
-                      <ConfirmButton
-                        description={`Delete the "${page.title}" page?`}
-                        onConfirm={deletePageAction.bind(null, page.slug)}
-                      />
+                      <form action={deletePageAction.bind(null, page.slug)}>
+                        <button
+                          type="submit"
+                          className="inline-flex h-9 items-center gap-2 rounded-lg border border-terracotta/30 px-3 text-sm font-medium text-terracotta transition-colors hover:bg-terracotta/10"
+                        >
+                          <Trash2 className="size-4" />
+                          Delete
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>

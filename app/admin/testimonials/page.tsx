@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { Pencil, Plus, Star } from "lucide-react";
+import { Pencil, Plus, Star, Trash2 } from "lucide-react";
 
 import { PublishToggle } from "@/components/admin/content/PublishToggle";
-import { ConfirmButton } from "@/components/admin/rooms/ConfirmButton";
 import { db } from "@/lib/db";
 import { cn } from "@/lib/utils";
 import {
@@ -108,10 +107,15 @@ export default async function AdminTestimonialsPage() {
                         <Pencil className="size-4" />
                         Edit
                       </Link>
-                      <ConfirmButton
-                        description={`Delete ${testimonial.guestName}'s testimonial?`}
-                        onConfirm={deleteTestimonialAction.bind(null, testimonial.id)}
-                      />
+                      <form action={deleteTestimonialAction.bind(null, testimonial.id)}>
+                        <button
+                          type="submit"
+                          className="inline-flex h-9 items-center gap-2 rounded-lg border border-terracotta/30 px-3 text-sm font-medium text-terracotta transition-colors hover:bg-terracotta/10"
+                        >
+                          <Trash2 className="size-4" />
+                          Delete
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>

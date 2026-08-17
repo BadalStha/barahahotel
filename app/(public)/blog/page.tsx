@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
     select: { coverImageUrl: true },
   });
 
-  const title = "Blog";
+  const title = "Blog — Baraha Hotel and Lodge, Bhedetar";
   const description =
     "Stories and travel notes from Baraha Hotel and Lodge — treks, food, and the Dhankuta hills.";
 
