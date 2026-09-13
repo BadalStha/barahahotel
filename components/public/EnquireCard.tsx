@@ -1,4 +1,5 @@
 import { Phone, Mail } from "lucide-react";
+import Link from "next/link";
 
 import { getSiteSettings } from "@/lib/settings";
 import { cn } from "@/lib/utils";
@@ -57,6 +58,12 @@ export async function EnquireCard({ className }: EnquireCardProps) {
             Email us
           </a>
         ) : null}
+        <Link
+          href="/contact"
+          className="text-center text-sm font-medium text-pine underline-offset-2 hover:underline"
+        >
+          Or send us a message →
+        </Link>
       </div>
     </div>
   );

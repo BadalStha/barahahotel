@@ -13,6 +13,14 @@ export type GalleryPhoto = {
   category: string | null;
 };
 
+/** Keyword-relevant fallback so no photo ever ships with an empty alt. */
+function photoAlt(photo: GalleryPhoto): string {
+  if (photo.altText?.trim()) return photo.altText;
+  if (photo.category?.trim())
+    return `${photo.category} at Baraha Hotel and Lodge, Bhedetar`;
+  return "Baraha Hotel and Lodge, Bhedetar";
+}
+
 // Cycling aspect ratios give the masonry columns their staggered rhythm
 // while every photo keeps a fixed box (required for next/image `fill`).
 const RATIOS = [
@@ -123,7 +131,7 @@ export function GalleryGrid({ photos }: { photos: GalleryPhoto[] }) {
           >
             <CmsImage
               src={photo.url}
-              alt={photo.altText ?? ""}
+              alt={photoAlt(photo)}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className={cn("w-full", RATIOS[index % RATIOS.length])}
               imageClassName="transition-transform duration-500 group-hover:scale-105"
@@ -169,7 +177,7 @@ export function GalleryGrid({ photos }: { photos: GalleryPhoto[] }) {
           >
             <CmsImage
               src={active.url}
-              alt={active.altText ?? ""}
+              alt={photoAlt(active)}
               className="aspect-[16/10] w-full max-h-[80vh] rounded-xl"
               objectFit="contain"
               priority

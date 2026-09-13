@@ -13,5 +13,6 @@ export const PUBLIC_NAV = [
   { label: "Gallery", href: "/gallery" },
   { label: "About", href: "/about" },
   { label: "Blog", href: "/blog" },
+  { label: "FAQs", href: "/faq" },
   { label: "Contact", href: "/contact" },
 ];

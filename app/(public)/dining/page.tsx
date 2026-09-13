@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Utensils } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Utensils } from "lucide-react";
 
 import { JsonLd } from "@/components/public/JsonLd";
 import { PageHero } from "@/components/public/PageHero";
@@ -23,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
   ]);
   const str = (key: string, fallback = "") => getSetting(settings, key, fallback);
 
-  const title = str("dining_page_title", "Dining");
+  const title = `${str("dining_page_title", "Dining")} — Baraha Hotel and Lodge, Bhedetar`;
   const description =
     str(
       "dining_page_subtitle",
@@ -152,6 +153,13 @@ export default async function DiningPage() {
               <p className="text-sm text-charcoal/70">
                 {str("dining_cta_text")}
               </p>
+              <Link
+                href="/contact"
+                className="mt-1 inline-flex h-11 items-center gap-2 rounded-full bg-pine px-6 text-sm font-medium text-stone transition-colors hover:bg-pine/90"
+              >
+                Enquire about dining
+                <ArrowRight className="size-4" />
+              </Link>
             </div>
           ) : null}
         </div>

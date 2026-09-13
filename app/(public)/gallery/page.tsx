@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
   ]);
   const str = (key: string, fallback = "") => getSetting(settings, key, fallback);
 
-  const title = str("gallery_page_title", "Gallery");
+  const title = `${str("gallery_page_title", "Gallery")} — Baraha Hotel and Lodge, Bhedetar`;
   const description =
     str(
       "gallery_page_subtitle",

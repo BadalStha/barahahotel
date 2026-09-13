@@ -28,6 +28,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/gallery` },
     { url: `${base}/dining` },
     { url: `${base}/blog` },
+    { url: `${base}/faq` },
+    { url: `${base}/booking` },
     { url: `${base}/contact` },
   ];
 

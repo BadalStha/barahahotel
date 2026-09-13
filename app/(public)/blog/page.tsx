@@ -85,7 +85,7 @@ export default async function BlogListPage() {
               >
                 <CmsImage
                   src={post.coverImageUrl}
-                  alt={post.title}
+                  alt={`${post.title} — Baraha Hotel and Lodge, Bhedetar`}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="h-44 w-full"
                   imageClassName="transition-transform duration-500 group-hover:scale-105"

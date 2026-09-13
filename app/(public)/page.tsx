@@ -11,11 +11,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { db } from "@/lib/db";
 import { getSetting, getSiteSettings } from "@/lib/settings";
-import {
-  absoluteImage,
-  socialMetadata,
-  url,
-} from "@/lib/seo";
+import { lodgingBusinessJsonLd, socialMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 // ISR: cached for an hour, revalidated immediately by admin save actions
@@ -34,13 +30,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = getSetting(
     settings,
     "tagline",
-    "A Himalayan hill-station retreat in Bhedetar, Dhankuta, Nepal.",
+    "Baraha Hotel and Lodge — a hill-station hotel in Bhedetar, Dhankuta, Nepal with mountain views, home-style food, free WiFi and hot water.",
   );
   return {
-    title: `${title} — Lodge in Bhedetar, Nepal`,
+    title: `${title} — Hotel in Bhedetar, Dhankuta, Nepal`,
     description,
     ...socialMetadata({
-      title: `${title} — Lodge in Bhedetar, Nepal`,
+      title: `${title} — Hotel in Bhedetar, Dhankuta, Nepal`,
       description,
       path: "/",
       image: getSetting(settings, "homepage_hero_image") || null,
@@ -77,37 +73,33 @@ export default async function Home() {
     }))
     .filter((usp) => usp.title || usp.text);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "LodgingBusiness",
+  // AggregateRating is computed from real published testimonials only —
+  // never fabricated. Omitted entirely until the first review exists.
+  const aggregateRating =
+    testimonials.length > 0
+      ? {
+          ratingValue:
+            Math.round(
+              (testimonials.reduce((sum, t) => sum + t.rating, 0) /
+                testimonials.length) *
+                10,
+            ) / 10,
+          reviewCount: testimonials.length,
+        }
+      : null;
+
+  const jsonLd = lodgingBusinessJsonLd({
     name: hotelName,
     description: str("tagline"),
-    url: url("/"),
-    telephone: str("phone") || undefined,
-    email: str("email") || undefined,
-    image: absoluteImage(heroImage),
+    telephone: str("phone"),
+    email: str("email"),
+    image: heroImage,
     priceRange: featuredRooms[0]
       ? `NPR ${Number(featuredRooms[0].basePrice)} / night`
       : undefined,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: str("location"),
-      addressLocality: "Bhedetar",
-      addressRegion: "Dhankuta",
-      addressCountry: "NP",
-    },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: 26.9357,
-      longitude: 87.2822,
-    },
-    sameAs: [
-      str("social_facebook"),
-      str("social_instagram"),
-      str("social_twitter"),
-      str("social_youtube"),
-    ].filter(Boolean),
-  };
+    streetAddress: str("location"),
+    aggregateRating,
+  });
 
   return (
     <div>
@@ -132,7 +124,7 @@ export default async function Home() {
                 </p>
               ) : null}
               <h1 className="font-display text-4xl leading-tight sm:text-5xl lg:text-6xl">
-                {str("homepage_hero_title", "Wake up to the Himalayas")}
+                {str("homepage_hero_title", "Wake up to the Himalayas in Bhedetar")}
               </h1>
               <p className="max-w-xl text-base leading-relaxed text-stone/85 sm:text-lg">
                 {str(

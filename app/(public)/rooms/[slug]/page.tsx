@@ -14,6 +14,7 @@ import { formatNPR } from "@/lib/format";
 import {
   absoluteImage,
   breadcrumbJsonLd,
+  lodgingBusinessJsonLd,
   socialMetadata,
   url,
 } from "@/lib/seo";
@@ -122,7 +123,10 @@ export default async function PublicRoomDetailPage({
               <div className="mt-6 flex flex-col gap-3">
                 <CmsImage
                   src={roomType.images[0]?.url}
-                  alt={roomType.images[0]?.altText ?? roomType.name}
+                  alt={
+                    roomType.images[0]?.altText ??
+                    `${roomType.name} at Baraha Hotel and Lodge, Bhedetar`
+                  }
                   priority
                   sizes="(max-width: 1024px) 100vw, 65vw"
                   className="aspect-[16/9] w-full rounded-2xl border border-pine/15"
@@ -133,7 +137,10 @@ export default async function PublicRoomDetailPage({
                       <CmsImage
                         key={img.id}
                         src={img.url}
-                        alt={img.altText ?? ""}
+                        alt={
+                          img.altText ??
+                          `${roomType.name} at Baraha Hotel and Lodge, Bhedetar`
+                        }
                         sizes="144px"
                         className="h-24 w-36 shrink-0 rounded-xl border border-charcoal/10"
                       />
@@ -213,24 +220,11 @@ export default async function PublicRoomDetailPage({
             { name: roomType.name, path: `/rooms/${roomType.slug}` },
           ]),
           productJsonLd,
-          {
-            "@context": "https://schema.org",
-            "@type": "LodgingBusiness",
-            name: "Baraha Hotel and Lodge",
-            address: {
-              "@type": "PostalAddress",
-              streetAddress: "Bhedetar, Dhankuta, Nepal",
-              addressLocality: "Bhedetar",
-              addressRegion: "Dhankuta",
-              addressCountry: "NP",
-            },
-            geo: {
-              "@type": "GeoCoordinates",
-              latitude: 26.9357,
-              longitude: 87.2822,
-            },
+          lodgingBusinessJsonLd({
+            description: roomType.description ?? undefined,
+            image: roomType.images[0]?.url,
             priceRange: `NPR ${Number(roomType.basePrice)} / night`,
-          },
+          }),
         ]}
       />
     </div>

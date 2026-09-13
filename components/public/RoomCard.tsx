@@ -31,7 +31,7 @@ export function RoomCard({
       <div className="relative overflow-hidden">
         <CmsImage
           src={room.imageUrl}
-          alt={room.imageAlt ?? room.name}
+          alt={room.imageAlt ?? `${room.name} at Baraha Hotel and Lodge, Bhedetar`}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="h-48 w-full"
           imageClassName="transition-transform duration-500 group-hover:scale-105"

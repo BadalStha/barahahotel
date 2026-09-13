@@ -54,8 +54,8 @@ const roomTypeSeeds: RoomTypeSeed[] = [
     sizeSqft: 180,
     amenities: ["Free WiFi", "Hot water", "Garden view", "Writing desk"],
     images: [
-      { url: "/images/rooms/standard-1.jpg", altText: "Standard room with a double bed", sortOrder: 1 },
-      { url: "/images/rooms/standard-2.jpg", altText: "Standard room bathroom", sortOrder: 2 },
+      { url: "/images/rooms/standard-1.jpg", altText: "Standard room with a double bed at Baraha Hotel, Bhedetar", sortOrder: 1 },
+      { url: "/images/rooms/standard-2.jpg", altText: "Standard room bathroom at Baraha Hotel and Lodge, Bhedetar", sortOrder: 2 },
     ],
   },
   {
@@ -68,8 +68,8 @@ const roomTypeSeeds: RoomTypeSeed[] = [
     sizeSqft: 260,
     amenities: ["Free WiFi", "Balcony", "Hill view", "Hot water", "Room service"],
     images: [
-      { url: "/images/rooms/deluxe-1.jpg", altText: "Deluxe room with a balcony", sortOrder: 1 },
-      { url: "/images/rooms/deluxe-2.jpg", altText: "Deluxe room seating area", sortOrder: 2 },
+      { url: "/images/rooms/deluxe-1.jpg", altText: "Deluxe room with a balcony and hill view at Baraha Hotel, Bhedetar", sortOrder: 1 },
+      { url: "/images/rooms/deluxe-2.jpg", altText: "Deluxe room seating area at Baraha Hotel and Lodge, Bhedetar", sortOrder: 2 },
     ],
   },
   {
@@ -82,15 +82,15 @@ const roomTypeSeeds: RoomTypeSeed[] = [
     sizeSqft: 420,
     amenities: ["Free WiFi", "Two bedrooms", "Living room", "Kitchenette", "Hill view"],
     images: [
-      { url: "/images/rooms/suite-1.jpg", altText: "Family suite living room", sortOrder: 1 },
-      { url: "/images/rooms/suite-2.jpg", altText: "Family suite bedroom", sortOrder: 2 },
+      { url: "/images/rooms/suite-1.jpg", altText: "Family suite living room at Baraha Hotel, Bhedetar", sortOrder: 1 },
+      { url: "/images/rooms/suite-2.jpg", altText: "Family suite bedroom with hill view at Baraha Hotel and Lodge, Bhedetar", sortOrder: 2 },
     ],
   },
 ];
 
 const siteSettings = [
   { key: "hotel_name", value: "Baraha Hotel and Lodge" },
-  { key: "tagline", value: "A Himalayan hill-station retreat in Bhedetar, Dhankuta" },
+  { key: "tagline", value: "A hill-station hotel in Bhedetar, Dhankuta — mountain views, home-style food, free WiFi and hot water" },
   { key: "location", value: "Bhedetar, Dhankuta, Nepal" },
   { key: "phone", value: "+977-00-0000000" },
   { key: "email", value: "info@barahahotel.com" },
@@ -102,7 +102,7 @@ const siteSettings = [
   { key: "check_in_time", value: "2:00 PM" },
   { key: "check_out_time", value: "12:00 PM" },
   { key: "invoice_tax_rate", value: 13 },
-  { key: "homepage_hero_title", value: "Wake up to the Himalayas" },
+  { key: "homepage_hero_title", value: "Wake up to the Himalayas in Bhedetar" },
   { key: "homepage_hero_subtitle", value: "Quiet rooms, mountain views, and home-style food at a hill-station retreat in Bhedetar, Dhankuta." },
   { key: "homepage_hero_image", value: "/images/rooms/deluxe-1.jpg" },
   { key: "homepage_hero_badge", value: "Bhedetar · Dhankuta · Nepal" },
@@ -154,17 +154,39 @@ const pageSeeds = [
       { type: "paragraph", text: "Baraha Hotel and Lodge sits on the ridgeline at Bhedetar, where the Terai plains rise into the Dhankuta hills. We've been welcoming travellers, trekkers, and families for years with warm rooms, mountain views, and food cooked the way we cook at home.", url: "", alt: "" },
       { type: "heading", text: "Our story", url: "", alt: "" },
       { type: "paragraph", text: "What started as a small roadside lodge has grown into a full-service hotel, while staying true to its roots: honest hospitality, local ingredients, and a cup of chiya ready whenever you land.", url: "", alt: "" },
-      { type: "image", text: "", url: "/images/rooms/standard-1.jpg", alt: "The Baraha Hotel garden" },
+      { type: "image", text: "", url: "/images/rooms/standard-1.jpg", alt: "The Baraha Hotel garden in Bhedetar, Dhankuta" },
+    ],
+  },
+  {
+    slug: "faq",
+    title: "Frequently asked questions",
+    metaTitle: "FAQs — Baraha Hotel and Lodge, Bhedetar",
+    metaDescription: "Answers about staying at Baraha Hotel and Lodge — best time to visit Bhedetar, how to reach us from Dharan and Kathmandu, hot water, WiFi, food and check-in times.",
+    blocks: [
+      { type: "heading", text: "What is the best time to visit Bhedetar?", url: "", alt: "" },
+      { type: "paragraph", text: "October to November is the sweet spot: crisp mornings, clear skies, and green hills after the monsoon. March to April brings rhododendron blooms along the ridges. Winter is cold but sunny with quiet trails, while the summer monsoon turns everything lush — though mist can hide the views. Baraha Hotel and Lodge welcomes guests in every season.", url: "", alt: "" },
+      { type: "heading", text: "How do I reach Baraha Hotel from Dharan, Itahari or Kathmandu?", url: "", alt: "" },
+      { type: "paragraph", text: "From Dharan it is a 20–30 minute uphill drive toward Dhankuta — take any taxi, jeep or bus heading to Bhedetar and ask the driver for Baraha Hotel and Lodge. From Itahari, travel via Dharan (about 1–1.5 hours in total). From Kathmandu, take an overnight bus to Dharan or Itahari (10–12 hours) or fly to Biratnagar and drive up (2.5–3 hours), then continue to Bhedetar. Call us before you travel and we will guide you the last stretch.", url: "", alt: "" },
+      { type: "heading", text: "How far is the Bhedetar viewpoint from the hotel?", url: "", alt: "" },
+      { type: "paragraph", text: "About ten minutes by car or motorbike, or roughly forty minutes on foot along a gentle uphill trail. Go before 7 AM for the clearest light over the Terai plains and the Koshi valley. Bhedetar Tower is also nearby and easy to combine into the same outing — ask at the front desk and we will point you the right way.", url: "", alt: "" },
+      { type: "heading", text: "Does Baraha Hotel have hot water and WiFi?", url: "", alt: "" },
+      { type: "paragraph", text: "Yes — every room has reliable hot water and free WiFi. After a cold morning at the viewpoint, a hot shower and a pot of chiya are waiting.", url: "", alt: "" },
+      { type: "heading", text: "What food do you serve?", url: "", alt: "" },
+      { type: "paragraph", text: "Simple home-style meals with local ingredients: dal bhat, gundruk soup, mutton sekuwa, sel roti with milk tea for breakfast, and fresh local orange juice in season. We can pack trekking lunches if you ask the evening before — see our dining page for the full menu.", url: "", alt: "" },
+      { type: "heading", text: "What are the check-in and check-out times?", url: "", alt: "" },
+      { type: "paragraph", text: "Check-in is from 2:00 PM and check-out is by 12:00 PM. Arriving early or leaving late? Call or message us and we will do our best to adjust.", url: "", alt: "" },
+      { type: "heading", text: "How many days should I stay in Bhedetar?", url: "", alt: "" },
+      { type: "paragraph", text: "Two to three days is ideal: one morning for the viewpoint and tower, one day for the pine trails and tea gardens, and an unhurried day for Dhankuta bazaar or simply the hotel garden. Families and trekkers passing through often stay one night — our family suites sleep up to five.", url: "", alt: "" },
     ],
   },
 ];
 
 const gallerySeeds = [
-  { url: "/images/rooms/standard-1.jpg", altText: "Standard room with a double bed", category: "Rooms", sortOrder: 0 },
-  { url: "/images/rooms/deluxe-1.jpg", altText: "Deluxe room balcony at sunrise", category: "Rooms", sortOrder: 1 },
-  { url: "/images/rooms/suite-1.jpg", altText: "Family suite living room", category: "Rooms", sortOrder: 2 },
-  { url: "/images/food/dal-bhat.jpg", altText: "Dal bhat with seasonal vegetables", category: "Dining", sortOrder: 3 },
-  { url: "/images/food/sekuwa.jpg", altText: "Mutton sekuwa with chutney", category: "Dining", sortOrder: 4 },
+  { url: "/images/rooms/standard-1.jpg", altText: "Standard room with a double bed at Baraha Hotel, Bhedetar", category: "Rooms", sortOrder: 0 },
+  { url: "/images/rooms/deluxe-1.jpg", altText: "Deluxe room balcony at sunrise at Baraha Hotel and Lodge, Bhedetar", category: "Rooms", sortOrder: 1 },
+  { url: "/images/rooms/suite-1.jpg", altText: "Family suite living room at Baraha Hotel, Bhedetar", category: "Rooms", sortOrder: 2 },
+  { url: "/images/food/dal-bhat.jpg", altText: "Dal bhat with seasonal vegetables at Baraha Hotel, Bhedetar", category: "Dining", sortOrder: 3 },
+  { url: "/images/food/sekuwa.jpg", altText: "Mutton sekuwa with chutney at Baraha Hotel and Lodge, Bhedetar", category: "Dining", sortOrder: 4 },
 ];
 
 const blogSeeds = [

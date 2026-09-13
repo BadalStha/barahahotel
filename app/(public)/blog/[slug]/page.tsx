@@ -84,7 +84,7 @@ export default async function BlogPostPage({
           {post.coverImageUrl ? (
             <CmsImage
               src={post.coverImageUrl}
-              alt={post.title}
+              alt={`${post.title} — Baraha Hotel and Lodge, Bhedetar`}
               priority
               sizes="(max-width: 768px) 100vw, 768px"
               className="aspect-[16/8] w-full rounded-2xl border border-pine/15"
@@ -119,6 +119,28 @@ export default async function BlogPostPage({
               {post.excerpt}
             </p>
           ) : null}
+
+          <div className="mt-8 flex flex-col items-start gap-3 rounded-2xl bg-pine px-6 py-6 text-stone">
+            <h2 className="font-display text-xl">Stay with us in Bhedetar</h2>
+            <p className="text-sm leading-relaxed text-stone/80">
+              Visiting the hills? See our rooms and send us an enquiry — we
+              usually reply within a day.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/rooms"
+                className="inline-flex h-11 items-center rounded-full bg-saffron px-6 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
+              >
+                View rooms
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex h-11 items-center rounded-full border border-white/30 px-6 text-sm font-semibold text-stone transition-colors hover:bg-white/10"
+              >
+                Enquire now
+              </Link>
+            </div>
+          </div>
         </article>
       </Container>
 

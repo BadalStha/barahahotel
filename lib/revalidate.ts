@@ -18,6 +18,8 @@ export function revalidatePublicSite() {
     "/dining",
     "/blog",
     "/blog/[slug]",
+    "/faq",
+    "/booking",
     "/contact",
   ]) {
     revalidatePath(path);

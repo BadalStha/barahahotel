@@ -88,3 +88,80 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
     })),
   };
 }
+
+/**
+ * Exact coordinates of Baraha Hotel and Lodge, Bhedetar —
+ * resolved from the hotel's Google Maps listing
+ * (https://maps.app.goo.gl/k6vuVepioCLQKxSV7).
+ */
+export const HOTEL_GEO = {
+  latitude: 26.8570158,
+  longitude: 87.321886,
+} as const;
+
+export type LodgingBusinessJsonLdInput = {
+  name?: string;
+  description?: string;
+  telephone?: string;
+  email?: string;
+  image?: string | null;
+  priceRange?: string;
+  streetAddress?: string;
+  aggregateRating?: { ratingValue: number; reviewCount: number } | null;
+};
+
+/** Full LodgingBusiness JSON-LD shared by the homepage and room pages. */
+export function lodgingBusinessJsonLd({
+  name = "Baraha Hotel and Lodge",
+  description,
+  telephone,
+  email,
+  image,
+  priceRange,
+  streetAddress = "Bhedetar, Dhankuta, Nepal",
+  aggregateRating,
+}: LodgingBusinessJsonLdInput = {}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    name,
+    description: description || undefined,
+    url: url("/"),
+    telephone: telephone || undefined,
+    email: email || undefined,
+    image: absoluteImage(image),
+    priceRange: priceRange || undefined,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress,
+      addressLocality: "Bhedetar",
+      addressRegion: "Dhankuta",
+      addressCountry: "NP",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: HOTEL_GEO.latitude,
+      longitude: HOTEL_GEO.longitude,
+    },
+    amenityFeature: [
+      "Free WiFi",
+      "Hot water",
+      "Home-style restaurant",
+      "Room service",
+      "Mountain views",
+      "Family rooms",
+    ].map((name) => ({
+      "@type": "LocationFeatureSpecification",
+      name,
+    })),
+    ...(aggregateRating && aggregateRating.reviewCount > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: aggregateRating.ratingValue,
+            reviewCount: aggregateRating.reviewCount,
+          },
+        }
+      : {}),
+  };
+}
