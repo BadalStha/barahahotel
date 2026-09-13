@@ -78,7 +78,7 @@ export async function checkOutAction(
 ): Promise<ActionResult> {
   const entry = await db.roomEntry.findUnique({
     where: { id: roomEntryId },
-    select: { id: true, status: true, roomId: true, checkOut: true, checkIn: true, room: { select: { roomNumber: true } } },
+    select: { id: true, status: true, roomId: true, checkOut: true, checkIn: true, reservationId: true, room: { select: { roomNumber: true } } },
   });
   if (!entry) return { error: "Room entry not found." };
   if (entry.status === "CHECKED_OUT") {
@@ -96,6 +96,14 @@ export async function checkOutAction(
       where: { id: entry.roomId },
       data: { status: "AVAILABLE" },
     }),
+    ...(entry.reservationId
+      ? [
+          db.reservation.updateMany({
+            where: { id: entry.reservationId, status: "CHECKED_IN" },
+            data: { status: "COMPLETED" },
+          }),
+        ]
+      : []),
   ]);
 
   await generateInvoice(roomEntryId);

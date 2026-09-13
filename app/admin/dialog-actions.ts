@@ -94,7 +94,7 @@ export async function checkInFormAction(formData: FormData): Promise<void> {
 export async function checkOutFormAction(roomEntryId: string): Promise<void> {
   const entry = await db.roomEntry.findUnique({
     where: { id: roomEntryId },
-    select: { id: true, status: true, roomId: true },
+    select: { id: true, status: true, roomId: true, reservationId: true },
   });
   if (!entry || entry.status === "CHECKED_OUT") {
     redirect("/admin/dashboard?error=checkout");
@@ -111,6 +111,14 @@ export async function checkOutFormAction(roomEntryId: string): Promise<void> {
       where: { id: entry.roomId },
       data: { status: "AVAILABLE" },
     }),
+    ...(entry.reservationId
+      ? [
+          db.reservation.updateMany({
+            where: { id: entry.reservationId, status: "CHECKED_IN" },
+            data: { status: "COMPLETED" },
+          }),
+        ]
+      : []),
   ]);
 
   await generateInvoice(roomEntryId);

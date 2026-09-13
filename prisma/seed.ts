@@ -338,6 +338,39 @@ const roomEntrySeeds: RoomEntrySeed[] = [
   },
 ];
 
+type ReservationSeed = {
+  guestName: string;
+  guestPhone: string;
+  numGuests: number;
+  roomTypeSlug: string;
+  roomNumber: string | null;
+  arrivalOffsetDays: number;
+  nights: number;
+  notes?: string;
+};
+
+const reservationSeeds: ReservationSeed[] = [
+  {
+    guestName: "Gita Sharma",
+    guestPhone: "+977-9810000011",
+    numGuests: 2,
+    roomTypeSlug: "deluxe-room",
+    roomNumber: null,
+    arrivalOffsetDays: 2,
+    nights: 3,
+    notes: "Called to book for the weekend.",
+  },
+  {
+    guestName: "Deepak KC",
+    guestPhone: "+977-9810000012",
+    numGuests: 4,
+    roomTypeSlug: "family-suite",
+    roomNumber: "301",
+    arrivalOffsetDays: 5,
+    nights: 2,
+  },
+];
+
 async function main() {
   if (!ADMIN_PASSWORD) {
     throw new Error(
@@ -474,8 +507,41 @@ async function main() {
     }
   }
 
+  // 6b. Advance bookings (demo) — only created when no matching BOOKED
+  // reservation exists, so re-running the seed never duplicates them.
+  for (const seed of reservationSeeds) {
+    const roomType = await prisma.roomType.findUnique({
+      where: { slug: seed.roomTypeSlug },
+    });
+    if (!roomType) continue;
+    const arrivalDate = atNoon(seed.arrivalOffsetDays);
+    const existing = await prisma.reservation.findFirst({
+      where: {
+        guestName: seed.guestName,
+        arrivalDate,
+        status: "BOOKED",
+      },
+    });
+    if (existing) continue;
+    const room = seed.roomNumber
+      ? await prisma.room.findUnique({ where: { roomNumber: seed.roomNumber } })
+      : null;
+    await prisma.reservation.create({
+      data: {
+        guestName: seed.guestName,
+        guestPhone: seed.guestPhone,
+        numGuests: seed.numGuests,
+        roomTypeId: roomType.id,
+        roomId: room?.id ?? null,
+        arrivalDate,
+        nights: seed.nights,
+        notes: seed.notes ?? null,
+      },
+    });
+  }
+
   // 7. Report
-  const [roomTypeCount, imageCount, roomCount, entryCount, chargeCount, pageCount, galleryCount, blogCount, testimonialCount, invoiceCount, menuItemCount] =
+  const [roomTypeCount, imageCount, roomCount, entryCount, chargeCount, pageCount, galleryCount, blogCount, testimonialCount, invoiceCount, menuItemCount, reservationCount] =
     await Promise.all([
       prisma.roomType.count(),
       prisma.roomImage.count(),
@@ -488,6 +554,7 @@ async function main() {
       prisma.testimonial.count(),
       prisma.invoice.count(),
       prisma.menuItem.count(),
+      prisma.reservation.count(),
     ]);
 
   console.log("Seed complete:");
@@ -504,6 +571,7 @@ async function main() {
   console.log(`  • Blog posts : ${blogCount} (${blogSeeds.filter((b) => b.isPublished).length} published)`);
   console.log(`  • Testimonials: ${testimonialCount}`);
   console.log(`  • Menu items : ${menuItemCount}`);
+  console.log(`  • Reservations: ${reservationCount}`);
 }
 
 main()

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BedDouble, DollarSign, Users } from "lucide-react";
+import { BedDouble, CalendarDays, DollarSign, Users } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { formatNPR } from "@/lib/format";
@@ -11,7 +11,16 @@ type PrismaRoom = {
   id: string;
   roomNumber: string;
   status: string;
+  roomTypeId: string;
   roomType: { name: string; basePrice: string };
+};
+
+export type ReservedMark = {
+  roomTypeId: string;
+  roomId: string | null;
+  /** ISO date string (client-safe). */
+  arrivalDate: string;
+  guestName: string;
 };
 
 type PrismaRoomEntry = {
@@ -51,9 +60,10 @@ type Props = {
   rooms: PrismaRoom[];
   activeEntries: PrismaRoomEntry[];
   menuItems: MenuPickItem[];
+  reservedMarks: ReservedMark[];
 };
 
-export function RoomBoard({ user, rooms, activeEntries, menuItems }: Props) {
+export function RoomBoard({ user, rooms, activeEntries, menuItems, reservedMarks }: Props) {
   const [selectedRoom, setSelectedRoom] = useState<PrismaRoom | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<PrismaRoomEntry | undefined>();
 
@@ -61,6 +71,20 @@ export function RoomBoard({ user, rooms, activeEntries, menuItems }: Props) {
     () => new Map(activeEntries.map((e) => [e.room.id, e])),
     [activeEntries],
   );
+
+  const reservedMarkMap = useMemo(() => {
+    const map = new Map<string, ReservedMark[]>();
+    for (const mark of reservedMarks) {
+      const list = map.get(mark.roomTypeId);
+      if (list) list.push(mark);
+      else map.set(mark.roomTypeId, [mark]);
+    }
+    // Earliest arrival first so the card shows the most urgent booking.
+    for (const list of map.values()) {
+      list.sort((a, b) => a.arrivalDate.localeCompare(b.arrivalDate));
+    }
+    return map;
+  }, [reservedMarks]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -105,6 +129,11 @@ export function RoomBoard({ user, rooms, activeEntries, menuItems }: Props) {
             const entry = activeEntryMap.get(room.id);
             const isOccupied = room.status === "OCCUPIED" && !!entry;
             const isVacant = room.status === "AVAILABLE";
+            const booking =
+              reservedMarkMap
+                .get(room.roomTypeId)
+                ?.find((m) => m.roomId === null || m.roomId === room.id) ??
+              null;
 
             return (
               <button
@@ -144,6 +173,16 @@ export function RoomBoard({ user, rooms, activeEntries, menuItems }: Props) {
                   </span>
                 </div>
                 <p className="text-xs text-charcoal/60">{room.roomType.name}</p>
+                {booking && !isOccupied ? (
+                  <p className="inline-flex items-center gap-1 text-xs font-medium text-pine">
+                    <CalendarDays className="size-3.5" />
+                    Booked: {booking.guestName} ·{" "}
+                    {new Date(booking.arrivalDate).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                    })}
+                  </p>
+                ) : null}
 
                 {isOccupied && entry ? (
                   <div className="flex flex-col gap-2">
