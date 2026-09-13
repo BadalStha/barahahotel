@@ -10,10 +10,10 @@
   --pine: #1f4d3a; /* primary — deep forest green */
   --terracotta: #b5502c; /* secondary / accent — clay rooftops */
   --saffron: #e1a93a; /* highlight / CTA — dawn light */
-  --stone: #f6f1e9; /* background — warm plaster */
-  --charcoal: #2b2620; /* text — hearthstone ink */
-  --mist: #e8ece9; /* light overlay — valley fog */
-  --surface: #fffdf8; /* card surface — warm carved plaster */
+  --stone: #f4f1eb; /* background — warm plaster */
+  --charcoal: #27251f; /* text — hearthstone ink */
+  --mist: #e3e8e4; /* light overlay — valley fog */
+  --surface: #fffefa; /* card surface — warm carved plaster */
 
   --background: var(--stone);
   --foreground: var(--charcoal);

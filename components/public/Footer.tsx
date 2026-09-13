@@ -56,7 +56,7 @@ export function Footer({ settings }: { settings: FooterSettings }) {
                   href={settings[key]}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-stone/80 transition-colors hover:bg-white/20 hover:text-white"
+                  className="inline-flex items-center gap-1.5 border-b border-stone/30 pb-1 text-xs font-medium text-stone/80 transition-colors hover:border-saffron hover:text-white"
                 >
                   <Globe className="size-3.5" />
                   {label}
@@ -138,7 +138,7 @@ export function Footer({ settings }: { settings: FooterSettings }) {
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-1.5 rounded-full bg-saffron px-5 py-2.5 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
+            className="inline-flex items-center gap-1.5 border border-saffron bg-saffron px-5 py-2.5 text-sm font-semibold text-charcoal transition-colors hover:bg-stone"
           >
             Enquire now
           </Link>

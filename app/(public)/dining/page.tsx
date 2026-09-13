@@ -155,7 +155,7 @@ export default async function DiningPage() {
               </p>
               <Link
                 href="/contact"
-                className="mt-1 inline-flex h-11 items-center gap-2 rounded-full bg-pine px-6 text-sm font-medium text-stone transition-colors hover:bg-pine/90"
+                className="mt-1 inline-flex h-11 items-center gap-2 rounded-md bg-pine px-6 text-sm font-medium text-stone transition-colors hover:bg-pine/90"
               >
                 Enquire about dining
                 <ArrowRight className="size-4" />

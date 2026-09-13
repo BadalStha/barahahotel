@@ -112,14 +112,14 @@ export default async function FaqPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/contact"
-              className="inline-flex h-11 items-center gap-2 rounded-full bg-saffron px-6 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
+              className="inline-flex h-11 items-center gap-2 rounded-md bg-saffron px-6 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
             >
               Contact us
               <ArrowRight className="size-4" />
             </Link>
             <Link
               href="/rooms"
-              className="inline-flex h-11 items-center rounded-full border border-white/30 px-6 text-sm font-semibold text-stone transition-colors hover:bg-white/10"
+              className="inline-flex h-11 items-center rounded-md border border-white/30 px-6 text-sm font-semibold text-stone transition-colors hover:bg-white/10"
             >
               View rooms
             </Link>

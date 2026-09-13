@@ -96,7 +96,7 @@ export default function StyleGuidePage() {
   return (
     <main className="min-h-screen bg-stone text-charcoal">
       {/* tri-color accent strip */}
-      <div className="h-1.5 bg-gradient-to-r from-pine via-saffron to-terracotta" />
+      <div className="h-1.5 bg-pine" />
 
       <Container className="flex flex-col gap-24 py-16 sm:py-24">
         {/* ── Header ─────────────────────────────────────────── */}
