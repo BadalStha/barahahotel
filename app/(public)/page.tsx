@@ -113,16 +113,11 @@ export default async function Home() {
           className="absolute inset-0 size-full"
           iconClassName="size-16"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-pine/80 via-pine/70 to-pine/85" />
+        <div className="absolute inset-0 bg-pine/75" />
 
         <Container className="relative z-10 py-16 lg:py-20">
           <div className="grid items-center gap-10 lg:grid-cols-[1fr_380px]">
             <div className="flex max-w-2xl flex-col items-start gap-5">
-              {str("homepage_hero_badge") ? (
-                <p className="rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-saffron">
-                  {str("homepage_hero_badge")}
-                </p>
-              ) : null}
               <h1 className="font-display text-4xl leading-tight sm:text-5xl lg:text-6xl">
                 {str("homepage_hero_title", "Wake up to the Himalayas in Bhedetar")}
               </h1>
@@ -135,14 +130,14 @@ export default async function Home() {
               <div className="flex flex-wrap items-center gap-3">
                 <Link
                   href="/rooms"
-                  className="inline-flex h-12 items-center gap-2 rounded-full bg-saffron px-7 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
+                  className="inline-flex h-12 items-center gap-2 rounded-md bg-saffron px-7 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
                 >
                   View rooms
                   <ArrowRight className="size-4" />
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex h-12 items-center gap-2 rounded-full border border-white/30 px-7 text-sm font-semibold text-stone transition-colors hover:bg-white/10"
+                  className="inline-flex h-12 items-center gap-2 rounded-md border border-white/30 px-7 text-sm font-semibold text-stone transition-colors hover:bg-white/10"
                 >
                   Enquire now
                 </Link>
@@ -173,7 +168,7 @@ export default async function Home() {
                 return (
                   <div
                     key={i}
-                    className="flex flex-col items-center gap-3 rounded-2xl border border-pine/15 bg-white p-7 text-center shadow-[0_14px_32px_-16px_rgba(43,38,32,0.32)]"
+                    className="flex flex-col items-center gap-3 border border-pine/15 bg-white p-7 text-center shadow-sm"
                   >
                     <span className="flex size-12 items-center justify-center rounded-xl bg-pine/10 text-pine">
                       <Icon className="size-6" />
@@ -233,7 +228,7 @@ export default async function Home() {
           <div className="mt-8 text-center">
             <Link
               href="/rooms"
-              className="inline-flex h-11 items-center gap-2 rounded-full border border-pine/40 px-6 text-sm font-medium text-pine transition-colors hover:bg-pine/10"
+              className="inline-flex h-11 items-center gap-2 rounded-md border border-pine/40 px-6 text-sm font-medium text-pine transition-colors hover:bg-pine/10"
             >
               View all rooms
               <ArrowRight className="size-4" />
@@ -272,7 +267,7 @@ export default async function Home() {
               </p>
               <Link
                 href="/contact"
-                className="mt-2 inline-flex h-11 items-center gap-2 rounded-full bg-pine px-6 text-sm font-medium text-stone transition-colors hover:bg-pine/90"
+                className="mt-2 inline-flex h-11 items-center gap-2 rounded-md bg-pine px-6 text-sm font-medium text-stone transition-colors hover:bg-pine/90"
               >
                 Plan your visit
                 <ArrowRight className="size-4" />
@@ -310,7 +305,7 @@ export default async function Home() {
       {/* CTA banner */}
       <section className="py-16 sm:py-20">
         <Container>
-          <div className="flex flex-col items-center gap-5 rounded-3xl bg-pine px-6 py-12 text-center text-stone shadow-[0_20px_40px_-16px_rgba(31,77,58,0.5)] sm:px-12">
+          <div className="flex flex-col items-center gap-5 border border-pine bg-pine px-6 py-12 text-center text-stone shadow-sm sm:px-12">
             <h2 className="font-display text-3xl leading-tight sm:text-4xl">
               {str("homepage_cta_title", "Ready for the hills?")}
             </h2>
@@ -323,7 +318,7 @@ export default async function Home() {
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/contact"
-                className="inline-flex h-12 items-center gap-2 rounded-full bg-saffron px-8 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
+                className="inline-flex h-12 items-center gap-2 rounded-md bg-saffron px-8 text-sm font-semibold text-charcoal transition-colors hover:bg-saffron/90"
               >
                 Enquire now
                 <ArrowRight className="size-4" />

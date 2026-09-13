@@ -169,7 +169,7 @@ export default async function PublicRoomDetailPage({
                   {roomType.amenities.map((amenity) => (
                     <li
                       key={amenity}
-                      className="rounded-full bg-pine/10 px-3 py-1 text-sm font-medium text-pine"
+                      className="border-l-2 border-saffron pl-2 text-sm text-charcoal/65"
                     >
                       {amenity}
                     </li>

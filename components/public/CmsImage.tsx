@@ -46,7 +46,7 @@ export function CmsImage({
     return (
       <div
         className={cn(
-          "flex items-center justify-center bg-gradient-to-br from-pine/20 to-pine/5 text-pine/60",
+          "flex items-center justify-center bg-mist text-pine/60",
           className,
         )}
       >

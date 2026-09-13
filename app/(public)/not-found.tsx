@@ -7,7 +7,7 @@ import { MountainDivider } from "@/components/ui/SectionHeading";
 export default function PublicNotFound() {
   return (
     <Container className="flex flex-col items-center gap-4 py-24 text-center">
-      <span className="flex size-16 items-center justify-center rounded-full bg-pine/10 text-pine">
+      <span className="flex size-16 items-center justify-center rounded-md bg-pine/10 text-pine">
         <Compass className="size-8" />
       </span>
       <p className="text-xs font-semibold uppercase tracking-[0.3em] text-terracotta">
@@ -24,13 +24,13 @@ export default function PublicNotFound() {
       <div className="flex flex-wrap justify-center gap-3">
         <Link
           href="/"
-          className="inline-flex h-11 items-center rounded-full bg-pine px-7 text-sm font-medium text-stone transition-colors hover:bg-pine/90"
+          className="inline-flex h-11 items-center rounded-md bg-pine px-7 text-sm font-medium text-stone transition-colors hover:bg-pine/90"
         >
           Back to home
         </Link>
         <Link
           href="/rooms"
-          className="inline-flex h-11 items-center rounded-full border border-pine/40 px-7 text-sm font-medium text-pine transition-colors hover:bg-pine/10"
+          className="inline-flex h-11 items-center rounded-md border border-pine/40 px-7 text-sm font-medium text-pine transition-colors hover:bg-pine/10"
         >
           Browse rooms
         </Link>

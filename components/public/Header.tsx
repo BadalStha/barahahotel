@@ -29,7 +29,7 @@ export function Header({ hotelName }: { hotelName: string }) {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-pine text-stone shadow-[0_10px_30px_-18px_rgba(31,77,58,0.7)]">
+    <header className="sticky top-0 z-40 border-b border-pine/15 bg-pine text-stone shadow-sm">
       <Container className="flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex min-w-0 items-center gap-2.5">
           <Mountain className="size-6 shrink-0 text-saffron" />
@@ -51,10 +51,10 @@ export function Header({ hotelName }: { hotelName: string }) {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "rounded-full px-3 py-2 text-[13px] font-medium transition-colors",
+                  "border-b-2 border-transparent px-3 py-5 text-[13px] font-medium transition-colors",
                   active
-                    ? "bg-white/15 text-white"
-                    : "text-stone/80 hover:bg-white/10 hover:text-white",
+                    ? "border-saffron text-white"
+                    : "text-stone/80 hover:border-stone/50 hover:text-white",
                 )}
               >
                 {item.label}

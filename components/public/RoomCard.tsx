@@ -26,7 +26,7 @@ export function RoomCard({
   return (
     <Link
       href={`/rooms/${room.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-pine/15 bg-white shadow-[0_14px_32px_-16px_rgba(43,38,32,0.32)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-16px_rgba(31,77,58,0.4)]"
+      className="group flex flex-col overflow-hidden border border-pine/15 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg"
     >
       <div className="relative overflow-hidden">
         <CmsImage
@@ -63,19 +63,19 @@ export function RoomCard({
             {room.amenities.slice(0, 3).map((amenity) => (
               <span
                 key={amenity}
-                className="rounded-full bg-pine/10 px-2.5 py-0.5 text-xs font-medium text-pine"
+                className="border-l-2 border-saffron pl-2 text-xs text-charcoal/65"
               >
                 {amenity}
               </span>
             ))}
             {room.amenities.length > 3 ? (
-              <span className="rounded-full bg-stone px-2.5 py-0.5 text-xs text-charcoal/50">
+              <span className="text-xs text-charcoal/45">
                 +{room.amenities.length - 3} more
               </span>
             ) : null}
           </div>
         ) : null}
-        <span className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-pine px-4 py-2 text-sm font-medium text-stone transition-colors group-hover:bg-pine/90">
+        <span className="mt-5 inline-flex w-fit items-center gap-1.5 border-b border-pine pb-1 text-sm font-medium text-pine transition-colors group-hover:border-saffron group-hover:text-terracotta">
           <BedDouble className="size-4" />
           View room
         </span>
