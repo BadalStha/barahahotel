@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { db } from "@/lib/db";
 import { revalidatePublicSite } from "@/lib/revalidate";
+import { requireAdmin } from "@/lib/admin-auth";
 import {
   menuItemSchema,
   type MenuItemInput,
@@ -15,6 +16,7 @@ export type ActionResult = { error?: string };
 export async function createMenuItemAction(
   input: MenuItemInput,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const parsed = menuItemSchema.safeParse(input);
   if (!parsed.success) return { error: "Please fix the highlighted fields." };
 
@@ -37,6 +39,7 @@ export async function updateMenuItemAction(
   id: string,
   input: MenuItemInput,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const parsed = menuItemSchema.safeParse(input);
   if (!parsed.success) return { error: "Please fix the highlighted fields." };
 
@@ -66,6 +69,7 @@ export async function toggleMenuItemAvailableAction(
   id: string,
   isAvailable: boolean,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const existing = await db.menuItem.findUnique({
     where: { id },
     select: { id: true },
@@ -79,6 +83,7 @@ export async function toggleMenuItemAvailableAction(
 }
 
 export async function deleteMenuItemAction(id: string): Promise<void> {
+  await requireAdmin();
   const existing = await db.menuItem.findUnique({
     where: { id },
     select: { id: true },

@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import { revalidatePublicSite } from "@/lib/revalidate";
+import { requireAdmin } from "@/lib/admin-auth";
 import {
   blogPostSchema,
   type BlogPostInput,
@@ -35,6 +36,7 @@ function toData(input: BlogPostInput) {
 export async function createBlogPostAction(
   input: BlogPostInput,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const parsed = blogPostSchema.safeParse(input);
   if (!parsed.success) return { error: "Please fix the highlighted fields." };
 
@@ -61,6 +63,7 @@ export async function updateBlogPostAction(
   slug: string,
   input: BlogPostInput,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const parsed = blogPostSchema.safeParse(input);
   if (!parsed.success) return { error: "Please fix the highlighted fields." };
 
@@ -98,6 +101,7 @@ export async function toggleBlogPostPublishedAction(
   slug: string,
   isPublished: boolean,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const post = await db.blogPost.findUnique({
     where: { slug },
     select: { id: true, publishedAt: true },
@@ -119,6 +123,7 @@ export async function toggleBlogPostPublishedAction(
 }
 
 export async function deleteBlogPostAction(slug: string): Promise<void> {
+  await requireAdmin();
   const post = await db.blogPost.findUnique({
     where: { slug },
     select: { id: true },

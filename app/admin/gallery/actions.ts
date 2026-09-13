@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { revalidatePublicSite } from "@/lib/revalidate";
+import { requireAdmin } from "@/lib/admin-auth";
 import {
   galleryImageSchema,
   type GalleryImageInput,
@@ -14,6 +15,7 @@ export type ActionResult = { error?: string };
 export async function createGalleryImageAction(
   input: GalleryImageInput,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const parsed = galleryImageSchema.safeParse(input);
   if (!parsed.success) return { error: "Please fix the highlighted fields." };
 
@@ -39,6 +41,7 @@ export async function updateGalleryImageAction(
   id: string,
   input: GalleryImageInput,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const parsed = galleryImageSchema.safeParse(input);
   if (!parsed.success) return { error: "Please fix the highlighted fields." };
 

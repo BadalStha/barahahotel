@@ -3,7 +3,9 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB — generous for hotel photos
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
+const SAFE_NAME = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,120}$/;
 
 /** Sanitizes a folder segment to [a-z0-9-_/] and prevents traversal. */
 function safeFolder(value: FormDataEntryValue | null): string {
@@ -34,13 +36,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const formData = await request.formData();
+  let formData: FormData;
+  try {
+    formData = await request.formData();
+  } catch {
+    return NextResponse.json({ error: "Invalid upload" }, { status: 400 });
+  }
   const file = formData.get("file");
 
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "Missing file" }, { status: 400 });
   }
-  if (!file.type.startsWith("image/")) {
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
     return NextResponse.json(
       { error: "Only image uploads are allowed" },
       { status: 400 },
@@ -53,12 +60,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const folder = safeFolder(formData.get("folder"));
-  // addRandomSuffix guarantees unique paths even for same-named files.
-  const blob = await put(`${folder}/${file.name}`, file, {
-    access: "public",
-    addRandomSuffix: true,
-  });
+  if (!SAFE_NAME.test(file.name) || file.name.includes("..")) {
+    return NextResponse.json({ error: "Invalid file name" }, { status: 400 });
+  }
 
-  return NextResponse.json({ url: blob.url });
+  const folder = safeFolder(formData.get("folder"));
+  try {
+    const blob = await put(`${folder}/${file.name}`, file, {
+      access: "public",
+      addRandomSuffix: true,
+    });
+    return NextResponse.json({ url: blob.url });
+  } catch {
+    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+  }
 }
