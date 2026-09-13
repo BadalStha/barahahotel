@@ -124,8 +124,8 @@ model RoomEntry {
   // Optional link back to the advance booking this stay came from.
   reservationId String?
   reservation   Reservation?    @relation(fields: [reservationId], references: [id], onDelete: SetNull)
-  // Set the moment the stay is successfully archived to Google Sheets.
-  // The prune job only ever deletes rows where this is non-null.
+  // Unused legacy field from the retired Google Sheets archive/prune flow.
+  // Kept as a nullable column to avoid a migration for no functional gain.
   archivedAt   DateTime?
 
   charges RoomCharge[]

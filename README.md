@@ -9,7 +9,6 @@ Marketing site + admin room board for Baraha Hotel and Lodge, a hill-station ret
 - **NextAuth v5** (credentials, JWT)
 - **Vercel Blob** (image uploads)
 - **Resend** (transactional email)
-- **googleapis** (optional Google Sheets sync)
 
 ## Local development
 
@@ -43,6 +42,9 @@ Marketing site + admin room board for Baraha Hotel and Lodge, a hill-station ret
   - Grid of room cards color-coded Vacant / Occupied
   - Tap a vacant room → short check-in form (guest name, phone, guests, rate)
   - Tap an occupied room → guest info, running list of room charges, add charge form, check-out button with confirm step
+  - Upcoming bookings + "Book a room" for advance reservations
+- `/admin/history` — Postgres-backed booking history (checked-out stays, most recent first, with This month / Last month / All time filter; each row opens its itemized invoice)
+- `/admin/invoices/[entryId]` — itemized invoice/print view (room-rate vs. food breakdown) for active and past stays
 - `/admin/content` — CMS pages, settings, blog, gallery, testimonials
 - `/admin/dining` — dining menu items (name, price, category, availability)
 
@@ -50,12 +52,9 @@ Marketing site + admin room board for Baraha Hotel and Lodge, a hill-station ret
 
 - `RoomType` — room category (Standard, Deluxe, Family Suite)
 - `Room` — physical room (number, floor, status)
-- `RoomEntry` — a guest stay linked to a room
-- `RoomCharge` — line items added during a stay (free-text items)
+- `RoomEntry` — a guest stay linked to a room (active and completed stays are all kept in Postgres permanently)
+- `RoomCharge` — line items added during a stay (linked to `MenuItem` when ordered from the dining menu, price snapshotted)
+- `Reservation` — advance booking (admin-only, no public booking engine)
 - `Invoice` — generated from RoomEntry + sum of RoomCharge rows
 
-No online booking engine. No Guest / Booking / FoodOrder tables.
-
-### Google Sheets sync (optional)
-
-Set `GOOGLE_SHEETS_CLIENT_EMAIL`, `GOOGLE_SHEETS_PRIVATE_KEY`, and `GOOGLE_SHEETS_SPREADSHEET_ID` to mirror room entries to a Google Sheet. Sheets failures are non-blocking — the app's Postgres DB is the source of truth.
+No online booking engine.

@@ -6,21 +6,8 @@ import { z } from "zod";
 
 import { db } from "@/lib/db";
 import { generateInvoice } from "@/lib/invoice";
-import { appendRoomEntryRow } from "@/lib/sheets";
-import { archiveStayToSheets, pruneArchivedStays } from "@/lib/archive";
 
 export type ActionResult = { error?: string };
-
-/**
- * Remove checked-out stays older than ARCHIVE_AFTER_DAYS that were
- * already archived to Google Sheets. Safe by construction: the prune
- * query only matches rows with archivedAt set.
- */
-export async function pruneArchivedStaysAction(): Promise<never> {
-  const pruned = await pruneArchivedStays();
-  revalidatePath("/admin/dashboard");
-  redirect(`/admin/dashboard?pruned=${pruned}`);
-}
 
 export async function checkInAction(input: unknown): Promise<ActionResult> {
   const parsed = checkInSchema.safeParse(input);
@@ -55,19 +42,6 @@ export async function checkInAction(input: unknown): Promise<ActionResult> {
 
   // Create the opening invoice right away so the stay always has a bill.
   await generateInvoice(entry.id);
-
-  void appendRoomEntryRow({
-    date: new Date().toISOString().split("T")[0],
-    roomNumber: entry.room.roomNumber,
-    guestName: entry.guestName,
-    phone: entry.guestPhone ?? "",
-    guests: entry.numGuests,
-    checkIn: entry.checkIn.toISOString(),
-    checkOut: "",
-    rate: Number(entry.ratePerNight),
-    chargesTotal: 0,
-    grandTotal: 0,
-  });
 
   revalidatePath("/admin/dashboard");
   redirect(`/admin/dashboard?room=${entry.id}`);
@@ -107,10 +81,6 @@ export async function checkOutAction(
   ]);
 
   await generateInvoice(roomEntryId);
-
-  // Archive the completed stay to Google Sheets (non-blocking — a Sheets
-  // failure never blocks checkout; the stay simply stays in Postgres).
-  void archiveStayToSheets(roomEntryId);
 
   revalidatePath("/admin/dashboard");
   redirect("/admin/dashboard");

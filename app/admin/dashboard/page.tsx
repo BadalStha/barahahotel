@@ -1,7 +1,8 @@
+import Link from "next/link";
+import { History } from "lucide-react";
+
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-
-import { HistoryToolbar } from "@/components/admin/HistoryToolbar";
 import {
   ReservationsSection,
   type BookingView,
@@ -11,11 +12,10 @@ import { RoomBoard } from "@/components/admin/RoomBoard";
 export default async function AdminDashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ pruned?: string; booked?: string; error?: string }>;
+  searchParams: Promise<{ booked?: string; error?: string }>;
 }) {
   const session = await auth();
   const params = await searchParams;
-  const pruned = params.pruned !== undefined ? Number(params.pruned) : undefined;
 
   const weekOut = new Date();
   weekOut.setDate(weekOut.getDate() + 7);
@@ -126,9 +126,15 @@ export default async function AdminDashboardPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <HistoryToolbar
-        pruned={pruned !== undefined && Number.isFinite(pruned) ? pruned : undefined}
-      />
+      <div className="flex flex-wrap items-center gap-3">
+        <Link
+          href="/admin/history"
+          className="inline-flex h-11 items-center gap-2 rounded-xl border border-charcoal/15 bg-white px-5 text-sm font-semibold text-charcoal transition-colors hover:bg-charcoal/5"
+        >
+          <History className="size-4" />
+          Booking history
+        </Link>
+      </div>
       <ReservationsSection
         bookings={bookings}
         roomTypes={roomTypes}

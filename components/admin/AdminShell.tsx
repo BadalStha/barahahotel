@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   FileText,
+  History,
   Image as ImageIcon,
   LayoutDashboard,
   Menu,
@@ -33,7 +34,10 @@ const NAV_SECTIONS: {
 }[] = [
   {
     label: "Overview",
-    items: [{ label: "Room board", href: "/admin/dashboard", icon: LayoutDashboard }],
+    items: [
+      { label: "Room board", href: "/admin/dashboard", icon: LayoutDashboard },
+      { label: "Booking history", href: "/admin/history", icon: History },
+    ],
   },
   {
     label: "Content",
