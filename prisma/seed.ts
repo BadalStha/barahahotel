@@ -105,6 +105,7 @@ const siteSettings = [
   { key: "homepage_hero_title", value: "Wake up to the Himalayas" },
   { key: "homepage_hero_subtitle", value: "Quiet rooms, mountain views, and home-style food at a hill-station retreat in Bhedetar, Dhankuta." },
   { key: "homepage_hero_image", value: "/images/rooms/deluxe-1.jpg" },
+  { key: "homepage_hero_badge", value: "Bhedetar · Dhankuta · Nepal" },
   { key: "homepage_usp_title", value: "Why stay at Baraha" },
   { key: "homepage_usp_subtitle", value: "Small comforts that make a big difference after a day on the hills." },
   { key: "homepage_usp_1_title", value: "Mountain views" },
@@ -113,9 +114,33 @@ const siteSettings = [
   { key: "homepage_usp_2_text", value: "Dal bhat, gundruk soup, and fresh local oranges — food cooked the way we cook at home." },
   { key: "homepage_usp_3_title", value: "Free WiFi & hot water" },
   { key: "homepage_usp_3_text", value: "Fast WiFi in every room and reliable hot water — the essentials, done properly." },
+  { key: "homepage_viewpoint_label", value: "A local favourite" },
   { key: "homepage_viewpoint_title", value: "The Bhedetar viewpoint" },
   { key: "homepage_viewpoint_text", value: "Ten minutes from the hotel, the Bhedetar viewpoint drops away to the Terai plains below. On clear mornings the whole of the Koshi valley unfolds at your feet — bring a camera and a cup of chiya." },
   { key: "homepage_viewpoint_image", value: "/images/rooms/deluxe-2.jpg" },
+  { key: "homepage_rooms_title", value: "Rooms & suites" },
+  { key: "homepage_rooms_subtitle", value: "Simple, warm rooms with mountain air — pick the one that fits your stay." },
+  { key: "homepage_testimonials_title", value: "What our guests say" },
+  { key: "homepage_testimonials_subtitle", value: "Real words from real stays." },
+  { key: "homepage_cta_title", value: "Ready for the hills?" },
+  { key: "homepage_cta_text", value: "Call, WhatsApp, or email us to check availability and plan your stay." },
+  { key: "rooms_page_title", value: "Rooms & suites" },
+  { key: "rooms_page_subtitle", value: "Simple, warm rooms with mountain air and hill-station quiet — pick the one that fits your stay." },
+  { key: "dining_page_title", value: "Dining" },
+  { key: "dining_page_subtitle", value: "Food cooked the way we cook at home — dal bhat, gundruk soup, and Dhankuta specialities." },
+  { key: "dining_intro_title", value: "Our food" },
+  { key: "dining_intro_text", value: "We serve simple, home-style meals made with local ingredients. Breakfast means sel roti and milk tea. Lunch and dinner feature dal bhat, gundruk soup, and seasonal vegetables. Ask us about packed trekking lunches and evening snacks." },
+  { key: "dining_menu_title", value: "Our menu" },
+  { key: "dining_cta_title", value: "Hungry outside menu hours?" },
+  { key: "dining_cta_text", value: "Ask our team about seasonal specials, packed treks lunches, and late-evening chiya." },
+  { key: "gallery_page_title", value: "Gallery" },
+  { key: "gallery_page_subtitle", value: "A glimpse of the hotel, the food, and the hills around Bhedetar." },
+  { key: "blog_page_title", value: "From the hills" },
+  { key: "blog_page_subtitle", value: "Travel notes, food stories, and tips from around Bhedetar and Dhankuta." },
+  { key: "contact_page_title", value: "Contact us" },
+  { key: "contact_page_subtitle", value: "Questions, requests, or just saying hello — we'd love to hear from you." },
+  { key: "contact_form_title", value: "Send us a message" },
+  { key: "contact_form_text", value: "We usually reply within a day." },
 ];
 
 const pageSeeds = [
@@ -176,6 +201,16 @@ const testimonialSeeds = [
   { guestName: "Sita Rai", quote: "Clean rooms, hot water, and the best chiya in Bhedetar. We'll be back.", rating: 5 },
   { guestName: "Hari Tamang", quote: "The staff went out of their way to help us plan our trek. Felt like family.", rating: 5 },
   { guestName: "Anju Gurung", quote: "Quiet, comfortable, and the dal bhat was superb. A great stop on the way to Dhankuta.", rating: 4 },
+];
+
+const menuItemSeeds = [
+  { name: "Dal Bhat", description: "Steamed rice with lentil soup, seasonal vegetables, and pickle.", price: "350", category: "Mains", sortOrder: 1 },
+  { name: "Gundruk Soup", description: "Fermented leafy-green soup — a Dhankuta speciality.", price: "400", category: "Mains", sortOrder: 2 },
+  { name: "Mutton Sekuwa", description: "Char-grilled marinated mutton served with chutney.", price: "650", category: "Mains", sortOrder: 3 },
+  { name: "Nepali Breakfast Set", description: "Sel roti, eggs, curry, and milk tea — served till 10 AM.", price: "450", category: "Breakfast", sortOrder: 4 },
+  { name: "Masala Chai", description: "Spiced milk tea with aromatic masala.", price: "100", category: "Drinks", sortOrder: 5 },
+  { name: "Fresh Orange Juice", description: "Freshly squeezed local oranges.", price: "250", category: "Drinks", sortOrder: 6 },
+  { name: "Sel Roti", description: "Crisp ring-shaped rice doughnuts, warm from the pan.", price: "120", category: "Snacks", sortOrder: 7 },
 ];
 
 const roomSeeds = [
@@ -383,6 +418,16 @@ async function main() {
     }
   }
 
+  // 4f. Dining menu items (upsert by name so manual entries survive reseeds)
+  for (const m of menuItemSeeds) {
+    const existing = await prisma.menuItem.findFirst({ where: { name: m.name } });
+    if (existing) {
+      await prisma.menuItem.update({ where: { id: existing.id }, data: m });
+    } else {
+      await prisma.menuItem.create({ data: m });
+    }
+  }
+
   // 5. Rooms
   for (const r of roomSeeds) {
     const roomType = await prisma.roomType.findUnique({ where: { slug: r.slug } });
@@ -430,7 +475,7 @@ async function main() {
   }
 
   // 7. Report
-  const [roomTypeCount, imageCount, roomCount, entryCount, chargeCount, pageCount, galleryCount, blogCount, testimonialCount, invoiceCount] =
+  const [roomTypeCount, imageCount, roomCount, entryCount, chargeCount, pageCount, galleryCount, blogCount, testimonialCount, invoiceCount, menuItemCount] =
     await Promise.all([
       prisma.roomType.count(),
       prisma.roomImage.count(),
@@ -442,6 +487,7 @@ async function main() {
       prisma.blogPost.count(),
       prisma.testimonial.count(),
       prisma.invoice.count(),
+      prisma.menuItem.count(),
     ]);
 
   console.log("Seed complete:");
@@ -457,6 +503,7 @@ async function main() {
   console.log(`  • Gallery    : ${galleryCount} photos`);
   console.log(`  • Blog posts : ${blogCount} (${blogSeeds.filter((b) => b.isPublished).length} published)`);
   console.log(`  • Testimonials: ${testimonialCount}`);
+  console.log(`  • Menu items : ${menuItemCount}`);
 }
 
 main()

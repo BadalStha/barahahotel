@@ -31,6 +31,7 @@ export const siteSettingsSchema = z.object({
   heroTitle: optionalString(200),
   heroSubtitle: optionalString(500),
   heroImage: optionalString(500),
+  heroBadge: optionalString(100),
   // Homepage USP section (three cards — icons are fixed per slot)
   uspTitle: optionalString(200),
   uspSubtitle: optionalString(500),
@@ -41,9 +42,36 @@ export const siteSettingsSchema = z.object({
   usp3Title: optionalString(120),
   usp3Text: optionalString(500),
   // Homepage viewpoint highlight
+  viewpointLabel: optionalString(100),
   viewpointTitle: optionalString(200),
   viewpointText: optionalString(1000),
   viewpointImage: optionalString(500),
+  // Homepage rooms / testimonials / CTA banner sections
+  homeRoomsTitle: optionalString(200),
+  homeRoomsSubtitle: optionalString(500),
+  homeTestimonialsTitle: optionalString(200),
+  homeTestimonialsSubtitle: optionalString(500),
+  homeCtaTitle: optionalString(200),
+  homeCtaText: optionalString(500),
+  // Page heroes (rooms / dining / gallery / blog / contact)
+  roomsTitle: optionalString(200),
+  roomsSubtitle: optionalString(500),
+  diningTitle: optionalString(200),
+  diningSubtitle: optionalString(500),
+  galleryTitle: optionalString(200),
+  gallerySubtitle: optionalString(500),
+  blogTitle: optionalString(200),
+  blogSubtitle: optionalString(500),
+  contactTitle: optionalString(200),
+  contactSubtitle: optionalString(500),
+  contactFormTitle: optionalString(200),
+  contactFormText: optionalString(300),
+  // Dining page copy
+  diningIntroTitle: optionalString(200),
+  diningIntroText: optionalString(2000),
+  diningMenuTitle: optionalString(200),
+  diningCtaTitle: optionalString(200),
+  diningCtaText: optionalString(500),
 });
 
 export type SiteSettingsInput = z.input<typeof siteSettingsSchema>;
@@ -88,6 +116,28 @@ export const galleryImageSchema = z.object({
 
 export type GalleryImageInput = z.input<typeof galleryImageSchema>;
 export type GalleryImageValues = z.output<typeof galleryImageSchema>;
+
+// ── Dining menu items ────────────────────────────────────────────
+
+export const menuItemSchema = z.object({
+  name: z.string().trim().min(1, "Item name is required").max(120),
+  description: optionalString(500),
+  price: z.coerce
+    .number({ message: "Enter a price" })
+    .min(0, "Price can't be negative")
+    .max(1000000, "Price is too high"),
+  category: optionalString(60),
+  isAvailable: z.boolean().default(true),
+  sortOrder: z.coerce
+    .number({ message: "Enter a sort order" })
+    .int("Whole number")
+    .min(0, "Can't be negative")
+    .max(9999, "Too large")
+    .default(0),
+});
+
+export type MenuItemInput = z.input<typeof menuItemSchema>;
+export type MenuItemValues = z.output<typeof menuItemSchema>;
 
 // ── Blog ─────────────────────────────────────────────────────────
 

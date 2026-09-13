@@ -13,9 +13,13 @@ export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
-  const title = "Contact";
+  const str = (key: string, fallback = "") => getSetting(settings, key, fallback);
+  const title = str("contact_page_title", "Contact");
   const description =
-    "Get in touch with Baraha Hotel and Lodge in Bhedetar, Dhankuta — call, email, or send us a message.";
+    str(
+      "contact_page_subtitle",
+      "Get in touch with Baraha Hotel and Lodge in Bhedetar, Dhankuta — call, email, or send us a message.",
+    ) || undefined;
   return {
     title,
     description,
@@ -37,10 +41,15 @@ export default async function ContactPage() {
   const email = str("email");
   const businessHours = str("business_hours");
 
-  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
+  // Exact Google Maps listing for Baraha Hotel and Lodge.
+  // Resolved from https://maps.app.goo.gl/k6vuVepioCLQKxSV7
+  // → 26.8570158, 87.321886 (Bhedetar, Dhankuta).
+  const mapsUrl = "https://maps.app.goo.gl/k6vuVepioCLQKxSV7";
+  const mapSrc =
+    "https://www.google.com/maps?q=26.8570158,87.321886+(Baraha+Hotel+and+Lodge)&z=18&output=embed";
 
   const details = [
-    { icon: MapPin, label: "Address", value: location, href: undefined },
+    { icon: MapPin, label: "Address", value: location, href: mapsUrl },
     phone
       ? {
           icon: Phone,
@@ -65,8 +74,13 @@ export default async function ContactPage() {
   return (
     <div>
       <PageHero
-        title="Contact us"
-        subtitle="Questions, requests, or just saying hello — we'd love to hear from you."
+        title={str("contact_page_title", "Contact us")}
+        subtitle={
+          str(
+            "contact_page_subtitle",
+            "Questions, requests, or just saying hello — we'd love to hear from you.",
+          ) || undefined
+        }
       />
 
       <Container className="py-12">
@@ -89,6 +103,12 @@ export default async function ContactPage() {
                     {href ? (
                       <a
                         href={href}
+                        {...(href.startsWith("http")
+                          ? {
+                              target: "_blank",
+                              rel: "noopener noreferrer",
+                            }
+                          : {})}
                         className="mt-0.5 block break-words text-sm font-medium text-charcoal transition-colors hover:text-pine"
                       >
                         {value}
@@ -105,10 +125,10 @@ export default async function ContactPage() {
 
             <div className="rounded-2xl border border-pine/15 bg-white p-6 shadow-[0_14px_32px_-16px_rgba(43,38,32,0.32)] sm:p-8">
               <h2 className="font-display text-2xl text-charcoal">
-                Send us a message
+                {str("contact_form_title", "Send us a message")}
               </h2>
               <p className="mt-1 text-sm text-charcoal/60">
-                We usually reply within a day.
+                {str("contact_form_text", "We usually reply within a day.")}
               </p>
               <div className="mt-5">
                 <ContactForm />
@@ -117,15 +137,29 @@ export default async function ContactPage() {
           </div>
 
           {/* Map */}
-          <div className="overflow-hidden rounded-2xl border border-pine/15 shadow-[0_14px_32px_-16px_rgba(43,38,32,0.32)]">
+          <div className="flex flex-col overflow-hidden rounded-2xl border border-pine/15 bg-white shadow-[0_14px_32px_-16px_rgba(43,38,32,0.32)]">
             <iframe
-              title={`Map of ${location}`}
+              title={`Map of Baraha Hotel and Lodge — ${location}`}
               src={mapSrc}
-              className="h-full min-h-[420px] w-full border-0 lg:min-h-full"
+              className="h-full min-h-[420px] w-full border-0 lg:min-h-[480px]"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               allowFullScreen
             />
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-pine/15 p-4">
+              <p className="text-sm font-medium text-charcoal/70">
+                Baraha Hotel and Lodge — {location}
+              </p>
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl bg-pine px-4 py-2 text-sm font-semibold text-cream transition-colors hover:bg-pine/90"
+              >
+                <MapPin className="size-4" />
+                Get Directions
+              </a>
+            </div>
           </div>
         </div>
       </Container>

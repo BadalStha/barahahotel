@@ -9,20 +9,29 @@ import { Container } from "@/components/ui/Container";
 import { db } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import { breadcrumbJsonLd, socialMetadata } from "@/lib/seo";
+import { getSetting, getSiteSettings } from "@/lib/settings";
 
 // ISR: cached for an hour, revalidated immediately by admin blog edits.
 export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const latest = await db.blogPost.findFirst({
-    where: { isPublished: true },
-    orderBy: { publishedAt: "desc" },
-    select: { coverImageUrl: true },
-  });
+  const [latest, settings] = await Promise.all([
+    db.blogPost.findFirst({
+      where: { isPublished: true },
+      orderBy: { publishedAt: "desc" },
+      select: { coverImageUrl: true },
+    }),
+    getSiteSettings(),
+  ]);
+  const str = (key: string, fallback = "") => getSetting(settings, key, fallback);
 
-  const title = "Blog — Baraha Hotel and Lodge, Bhedetar";
+  const hotelName = str("hotel_name", "Baraha Hotel and Lodge");
+  const title = `${str("blog_page_title", "Blog")} — ${hotelName}, Bhedetar`;
   const description =
-    "Stories and travel notes from Baraha Hotel and Lodge — treks, food, and the Dhankuta hills.";
+    str(
+      "blog_page_subtitle",
+      "Stories and travel notes from Baraha Hotel and Lodge — treks, food, and the Dhankuta hills.",
+    ) || undefined;
 
   return {
     title,
@@ -31,22 +40,34 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       path: "/blog",
-      image: latest?.coverImageUrl,
+      image:
+        latest?.coverImageUrl ||
+        getSetting(settings, "homepage_hero_image") ||
+        null,
     }),
   };
 }
 
 export default async function BlogListPage() {
-  const posts = await db.blogPost.findMany({
-    where: { isPublished: true },
-    orderBy: { publishedAt: "desc" },
-  });
+  const [posts, settings] = await Promise.all([
+    db.blogPost.findMany({
+      where: { isPublished: true },
+      orderBy: { publishedAt: "desc" },
+    }),
+    getSiteSettings(),
+  ]);
+  const str = (key: string, fallback = "") => getSetting(settings, key, fallback);
 
   return (
     <div>
       <PageHero
-        title="From the hills"
-        subtitle="Travel notes, food stories, and tips from around Bhedetar and Dhankuta."
+        title={str("blog_page_title", "From the hills")}
+        subtitle={
+          str(
+            "blog_page_subtitle",
+            "Travel notes, food stories, and tips from around Bhedetar and Dhankuta.",
+          ) || undefined
+        }
       />
 
       <Container className="py-12">

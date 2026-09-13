@@ -53,6 +53,7 @@ export default async function AdminContentSettingsPage() {
             heroTitle: str("homepage_hero_title"),
             heroSubtitle: str("homepage_hero_subtitle"),
             heroImage: str("homepage_hero_image"),
+            heroBadge: str("homepage_hero_badge"),
             uspTitle: str("homepage_usp_title"),
             uspSubtitle: str("homepage_usp_subtitle"),
             usp1Title: str("homepage_usp_1_title"),
@@ -61,9 +62,66 @@ export default async function AdminContentSettingsPage() {
             usp2Text: str("homepage_usp_2_text"),
             usp3Title: str("homepage_usp_3_title"),
             usp3Text: str("homepage_usp_3_text"),
+            viewpointLabel: str("homepage_viewpoint_label"),
             viewpointTitle: str("homepage_viewpoint_title"),
             viewpointText: str("homepage_viewpoint_text"),
             viewpointImage: str("homepage_viewpoint_image"),
+            homeRoomsTitle: str("homepage_rooms_title", "Rooms & suites"),
+            homeRoomsSubtitle: str(
+              "homepage_rooms_subtitle",
+              "Simple, warm rooms with mountain air — pick the one that fits your stay.",
+            ),
+            homeTestimonialsTitle: str(
+              "homepage_testimonials_title",
+              "What our guests say",
+            ),
+            homeTestimonialsSubtitle: str(
+              "homepage_testimonials_subtitle",
+              "Real words from real stays.",
+            ),
+            homeCtaTitle: str("homepage_cta_title", "Ready for the hills?"),
+            homeCtaText: str(
+              "homepage_cta_text",
+              "Call, WhatsApp, or email us to check availability and plan your stay.",
+            ),
+            roomsTitle: str("rooms_page_title", "Rooms & suites"),
+            roomsSubtitle: str(
+              "rooms_page_subtitle",
+              "Simple, warm rooms with mountain air and hill-station quiet — pick the one that fits your stay.",
+            ),
+            diningTitle: str("dining_page_title", "Dining"),
+            diningSubtitle: str(
+              "dining_page_subtitle",
+              "Food cooked the way we cook at home — dal bhat, gundruk soup, and Dhankuta specialities.",
+            ),
+            galleryTitle: str("gallery_page_title", "Gallery"),
+            gallerySubtitle: str(
+              "gallery_page_subtitle",
+              "A glimpse of the hotel, the food, and the hills around Bhedetar.",
+            ),
+            blogTitle: str("blog_page_title", "From the hills"),
+            blogSubtitle: str(
+              "blog_page_subtitle",
+              "Travel notes, food stories, and tips from around Bhedetar and Dhankuta.",
+            ),
+            contactTitle: str("contact_page_title", "Contact us"),
+            contactSubtitle: str(
+              "contact_page_subtitle",
+              "Questions, requests, or just saying hello — we'd love to hear from you.",
+            ),
+            contactFormTitle: str("contact_form_title", "Send us a message"),
+            contactFormText: str("contact_form_text", "We usually reply within a day."),
+            diningIntroTitle: str("dining_intro_title", "Our food"),
+            diningIntroText: str(
+              "dining_intro_text",
+              "We serve simple, home-style meals made with local ingredients. Breakfast means sel roti and milk tea. Lunch and dinner feature dal bhat, gundruk soup, and seasonal vegetables. Ask us about packed trekking lunches and evening snacks.",
+            ),
+            diningMenuTitle: str("dining_menu_title", "Our menu"),
+            diningCtaTitle: str("dining_cta_title", "Hungry outside menu hours?"),
+            diningCtaText: str(
+              "dining_cta_text",
+              "Ask our team about seasonal specials, packed treks lunches, and late-evening chiya.",
+            ),
           }}
         />
       </div>

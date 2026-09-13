@@ -126,9 +126,11 @@ export default async function Home() {
         <Container className="relative z-10 py-16 lg:py-20">
           <div className="grid items-center gap-10 lg:grid-cols-[1fr_380px]">
             <div className="flex max-w-2xl flex-col items-start gap-5">
-              <p className="rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-saffron">
-                Bhedetar · Dhankuta · Nepal
-              </p>
+              {str("homepage_hero_badge") ? (
+                <p className="rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-saffron">
+                  {str("homepage_hero_badge")}
+                </p>
+              ) : null}
               <h1 className="font-display text-4xl leading-tight sm:text-5xl lg:text-6xl">
                 {str("homepage_hero_title", "Wake up to the Himalayas")}
               </h1>
@@ -203,8 +205,13 @@ export default async function Home() {
         <Container>
           <div className="flex flex-col items-center gap-2 text-center">
             <SectionHeading
-              title="Rooms & suites"
-              subtitle="Simple, warm rooms with mountain air — pick the one that fits your stay."
+              title={str("homepage_rooms_title", "Rooms & suites")}
+              subtitle={
+                str(
+                  "homepage_rooms_subtitle",
+                  "Simple, warm rooms with mountain air — pick the one that fits your stay.",
+                ) || undefined
+              }
             />
           </div>
           {featuredRooms.length === 0 ? (
@@ -257,9 +264,11 @@ export default async function Home() {
               />
             </div>
             <div className="flex flex-col items-start gap-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta">
-                A local favourite
-              </p>
+              {str("homepage_viewpoint_label") ? (
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-terracotta">
+                  {str("homepage_viewpoint_label")}
+                </p>
+              ) : null}
               <h2 className="font-display text-3xl leading-tight text-charcoal sm:text-4xl">
                 {str("homepage_viewpoint_title", "The Bhedetar viewpoint")}
               </h2>
@@ -286,8 +295,11 @@ export default async function Home() {
         <section className="border-y border-pine/10 bg-pine/5 py-16 sm:py-20">
           <Container>
             <SectionHeading
-              title="What our guests say"
-              subtitle="Real words from real stays."
+              title={str("homepage_testimonials_title", "What our guests say")}
+              subtitle={
+                str("homepage_testimonials_subtitle", "Real words from real stays.") ||
+                undefined
+              }
             />
             <div className="mt-10">
               <TestimonialCarousel
@@ -308,10 +320,13 @@ export default async function Home() {
         <Container>
           <div className="flex flex-col items-center gap-5 rounded-3xl bg-pine px-6 py-12 text-center text-stone shadow-[0_20px_40px_-16px_rgba(31,77,58,0.5)] sm:px-12">
             <h2 className="font-display text-3xl leading-tight sm:text-4xl">
-              Ready for the hills?
+              {str("homepage_cta_title", "Ready for the hills?")}
             </h2>
             <p className="max-w-xl text-stone/80">
-              Call, WhatsApp, or email us to check availability and plan your stay.
+              {str(
+                "homepage_cta_text",
+                "Call, WhatsApp, or email us to check availability and plan your stay.",
+              )}
             </p>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
               <Link

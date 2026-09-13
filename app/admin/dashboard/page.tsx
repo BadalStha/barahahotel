@@ -38,12 +38,26 @@ export default async function AdminDashboardPage() {
 
   const mappedEntries = activeEntries.map((entry) => ({
     ...entry,
-    ratePerNight: String(entry.ratePerNight),
+    ratePerNight: entry.ratePerNight.toString(),
+    charges: entry.charges.map((charge) => ({
+      ...charge,
+      priceAtAdd: charge.priceAtAdd.toString(),
+    })),
+    invoice: entry.invoice
+      ? {
+          ...entry.invoice,
+          roomTotal: entry.invoice.roomTotal.toString(),
+          chargeTotal: entry.invoice.chargeTotal.toString(),
+          taxAmount: entry.invoice.taxAmount.toString(),
+          discountAmount: entry.invoice.discountAmount.toString(),
+          grandTotal: entry.invoice.grandTotal.toString(),
+        }
+      : null,
     room: {
       ...entry.room,
       roomType: {
         ...entry.room.roomType,
-        basePrice: String(entry.room.roomType.basePrice),
+        basePrice: entry.room.roomType.basePrice.toString(),
       },
     },
   })) as unknown as Parameters<typeof RoomBoard>[0]["activeEntries"];

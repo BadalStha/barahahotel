@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { FileText, Settings } from "lucide-react";
+import { FileText, Settings, UtensilsCrossed } from "lucide-react";
 
 const SECTIONS = [
   {
     title: "Site settings",
     description:
-      "Hotel name, tagline, contact details, social links, hours, tax rate, and homepage hero.",
+      "Hotel name, tagline, contact details, social links, hours, tax rate, homepage sections, and page heroes.",
     href: "/admin/content/settings",
     icon: Settings,
   },
@@ -15,6 +15,13 @@ const SECTIONS = [
       "Edit About and other page content — title, meta fields, and structured body blocks.",
     href: "/admin/content/pages",
     icon: FileText,
+  },
+  {
+    title: "Dining menu",
+    description:
+      "Manage the dishes and drinks shown on the public dining page — names, prices, categories.",
+    href: "/admin/dining",
+    icon: UtensilsCrossed,
   },
 ];
 

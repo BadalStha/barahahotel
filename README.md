@@ -44,6 +44,7 @@ Marketing site + admin room board for Baraha Hotel and Lodge, a hill-station ret
   - Tap a vacant room → short check-in form (guest name, phone, guests, rate)
   - Tap an occupied room → guest info, running list of room charges, add charge form, check-out button with confirm step
 - `/admin/content` — CMS pages, settings, blog, gallery, testimonials
+- `/admin/dining` — dining menu items (name, price, category, availability)
 
 ### Data model
 

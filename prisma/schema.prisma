@@ -185,6 +185,20 @@ model BlogPost {
   @@index([isPublished, publishedAt])
 }
 
+// ── Dining menu ──────────────────────────────────────────────────
+
+model MenuItem {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  price       Decimal @db.Decimal(10, 2)
+  category    String? // free-text grouping, e.g. "Mains", "Drinks"
+  isAvailable Boolean @default(true)
+  sortOrder   Int     @default(0)
+
+  @@index([isAvailable, sortOrder])
+}
+
 // ── Media & social proof ─────────────────────────────────────────
 
 model GalleryImage {

@@ -6,19 +6,27 @@ import { PageHero } from "@/components/public/PageHero";
 import { Container } from "@/components/ui/Container";
 import { db } from "@/lib/db";
 import { breadcrumbJsonLd, socialMetadata } from "@/lib/seo";
+import { getSetting, getSiteSettings } from "@/lib/settings";
 
 // ISR: cached for an hour, revalidated immediately by admin gallery edits.
 export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const firstPhoto = await db.galleryImage.findFirst({
-    orderBy: { sortOrder: "asc" },
-    select: { url: true },
-  });
+  const [firstPhoto, settings] = await Promise.all([
+    db.galleryImage.findFirst({
+      orderBy: { sortOrder: "asc" },
+      select: { url: true },
+    }),
+    getSiteSettings(),
+  ]);
+  const str = (key: string, fallback = "") => getSetting(settings, key, fallback);
 
-  const title = "Gallery";
+  const title = str("gallery_page_title", "Gallery");
   const description =
-    "Photos of Baraha Hotel and Lodge — rooms, dining, and the Dhankuta hills.";
+    str(
+      "gallery_page_subtitle",
+      "Photos of Baraha Hotel and Lodge — rooms, dining, and the Dhankuta hills.",
+    ) || undefined;
 
   return {
     title,
@@ -27,21 +35,31 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       path: "/gallery",
-      image: firstPhoto?.url,
+      image:
+        firstPhoto?.url || getSetting(settings, "homepage_hero_image") || null,
     }),
   };
 }
 
 export default async function GalleryPage() {
-  const photos = await db.galleryImage.findMany({
-    orderBy: { sortOrder: "asc" },
-  });
+  const [photos, settings] = await Promise.all([
+    db.galleryImage.findMany({
+      orderBy: { sortOrder: "asc" },
+    }),
+    getSiteSettings(),
+  ]);
+  const str = (key: string, fallback = "") => getSetting(settings, key, fallback);
 
   return (
     <div>
       <PageHero
-        title="Gallery"
-        subtitle="A glimpse of the hotel, the food, and the hills around Bhedetar."
+        title={str("gallery_page_title", "Gallery")}
+        subtitle={
+          str(
+            "gallery_page_subtitle",
+            "A glimpse of the hotel, the food, and the hills around Bhedetar.",
+          ) || undefined
+        }
       />
 
       <Container className="py-12">

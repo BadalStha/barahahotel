@@ -13,6 +13,7 @@ import {
   Newspaper,
   Settings,
   Star,
+  UtensilsCrossed,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -38,6 +39,7 @@ const NAV_SECTIONS: {
     label: "Content",
     items: [
       { label: "Content (CMS)", href: "/admin/content", icon: FileText },
+      { label: "Dining menu", href: "/admin/dining", icon: UtensilsCrossed },
       { label: "Gallery", href: "/admin/gallery", icon: ImageIcon },
       { label: "Blog", href: "/admin/blog", icon: Newspaper },
       { label: "Testimonials", href: "/admin/testimonials", icon: Star },

@@ -6,22 +6,30 @@ import { RoomCard } from "@/components/public/RoomCard";
 import { Container } from "@/components/ui/Container";
 import { db } from "@/lib/db";
 import { breadcrumbJsonLd, socialMetadata } from "@/lib/seo";
+import { getSetting, getSiteSettings } from "@/lib/settings";
 
 // ISR: cached for an hour, revalidated immediately by admin room edits.
 export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const firstRoom = await db.roomType.findFirst({
-    where: { isActive: true },
-    orderBy: { basePrice: "asc" },
-    select: {
-      images: { orderBy: { sortOrder: "asc" }, take: 1 },
-    },
-  });
+  const [firstRoom, settings] = await Promise.all([
+    db.roomType.findFirst({
+      where: { isActive: true },
+      orderBy: { basePrice: "asc" },
+      select: {
+        images: { orderBy: { sortOrder: "asc" }, take: 1 },
+      },
+    }),
+    getSiteSettings(),
+  ]);
+  const str = (key: string, fallback = "") => getSetting(settings, key, fallback);
 
-  const title = "Rooms & Suites — Lodge in Bhedetar, Dhankuta";
+  const title = `${str("rooms_page_title", "Rooms & Suites")} — Lodge in Bhedetar, Dhankuta`;
   const description =
-    "Standard, deluxe and family rooms at Baraha Hotel and Lodge in Bhedetar, Dhankuta — prices per night, max occupancy and amenities.";
+    str(
+      "rooms_page_subtitle",
+      "Standard, deluxe and family rooms at Baraha Hotel and Lodge in Bhedetar, Dhankuta — prices per night, max occupancy and amenities.",
+    ) || undefined;
 
   return {
     title,
@@ -30,25 +38,37 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       path: "/rooms",
-      image: firstRoom?.images[0]?.url,
+      image:
+        firstRoom?.images[0]?.url ||
+        getSetting(settings, "homepage_hero_image") ||
+        null,
     }),
   };
 }
 
 export default async function PublicRoomsPage() {
-  const roomTypes = await db.roomType.findMany({
-    where: { isActive: true },
-    orderBy: { basePrice: "asc" },
-    include: {
-      images: { orderBy: { sortOrder: "asc" }, take: 1 },
-    },
-  });
+  const [roomTypes, settings] = await Promise.all([
+    db.roomType.findMany({
+      where: { isActive: true },
+      orderBy: { basePrice: "asc" },
+      include: {
+        images: { orderBy: { sortOrder: "asc" }, take: 1 },
+      },
+    }),
+    getSiteSettings(),
+  ]);
+  const str = (key: string, fallback = "") => getSetting(settings, key, fallback);
 
   return (
     <div>
       <PageHero
-        title="Rooms & suites"
-        subtitle="Simple, warm rooms with mountain air and hill-station quiet — pick the one that fits your stay."
+        title={str("rooms_page_title", "Rooms & suites")}
+        subtitle={
+          str(
+            "rooms_page_subtitle",
+            "Simple, warm rooms with mountain air and hill-station quiet — pick the one that fits your stay.",
+          ) || undefined
+        }
       />
 
       <Container className="py-12">
