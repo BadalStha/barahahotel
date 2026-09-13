@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { db } from "@/lib/db";
 import { generateInvoice } from "@/lib/invoice";
+import { archiveStayToSheets } from "@/lib/archive";
 
 export type ActionResult = { error?: string };
 
@@ -97,6 +98,9 @@ export async function checkOutFormAction(roomEntryId: string): Promise<void> {
   ]);
 
   await generateInvoice(roomEntryId);
+
+  // Archive the completed stay to Google Sheets (non-blocking).
+  void archiveStayToSheets(roomEntryId);
 
   revalidatePath("/admin/dashboard");
   redirect("/admin/dashboard");

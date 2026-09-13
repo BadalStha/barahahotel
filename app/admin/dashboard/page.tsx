@@ -1,10 +1,17 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
+import { HistoryToolbar } from "@/components/admin/HistoryToolbar";
 import { RoomBoard } from "@/components/admin/RoomBoard";
 
-export default async function AdminDashboardPage() {
+export default async function AdminDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ pruned?: string }>;
+}) {
   const session = await auth();
+  const params = await searchParams;
+  const pruned = params.pruned !== undefined ? Number(params.pruned) : undefined;
 
   const [rooms, activeEntries] = await Promise.all([
     db.room.findMany({
@@ -63,6 +70,11 @@ export default async function AdminDashboardPage() {
   })) as unknown as Parameters<typeof RoomBoard>[0]["activeEntries"];
 
   return (
-    <RoomBoard user={user} rooms={mappedRooms} activeEntries={mappedEntries} />
+    <div className="flex flex-col gap-6">
+      <HistoryToolbar
+        pruned={pruned !== undefined && Number.isFinite(pruned) ? pruned : undefined}
+      />
+      <RoomBoard user={user} rooms={mappedRooms} activeEntries={mappedEntries} />
+    </div>
   );
 }
