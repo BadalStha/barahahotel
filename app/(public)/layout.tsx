@@ -5,6 +5,8 @@ import { Header } from "@/components/public/Header";
 import { getSetting, getSiteSettings } from "@/lib/settings";
 import { SITE_URL } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
