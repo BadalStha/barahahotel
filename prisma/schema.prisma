@@ -32,6 +32,13 @@ enum RoomEntryStatus {
   CHECKED_OUT
 }
 
+enum ReservationStatus {
+  BOOKED
+  CHECKED_IN
+  CANCELLED
+  COMPLETED
+}
+
 enum PaymentStatus {
   UNPAID
   PARTIAL
@@ -66,6 +73,7 @@ model RoomType {
 
   rooms  Room[]
   images RoomImage[]
+  reservations Reservation[]
 
   @@index([isActive])
 }
@@ -80,6 +88,7 @@ model Room {
   createdAt  DateTime   @default(now())
 
   entries RoomEntry[]
+  reservations Reservation[]
 
   @@index([roomTypeId])
   @@index([status])
@@ -112,6 +121,12 @@ model RoomEntry {
   notes        String?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
+  // Optional link back to the advance booking this stay came from.
+  reservationId String?
+  reservation   Reservation?    @relation(fields: [reservationId], references: [id], onDelete: SetNull)
+  // Set the moment the stay is successfully archived to Google Sheets.
+  // The prune job only ever deletes rows where this is non-null.
+  archivedAt   DateTime?
 
   charges RoomCharge[]
   invoice Invoice?
@@ -119,18 +134,51 @@ model RoomEntry {
   @@index([roomId])
   @@index([status])
   @@index([checkIn])
+  @@index([archivedAt])
 }
 
 model RoomCharge {
   id          String   @id @default(cuid())
   roomEntryId String
   roomEntry   RoomEntry @relation(fields: [roomEntryId], references: [id], onDelete: Cascade)
+  // Free-text name kept as the snapshot/legacy fallback — when the charge
+  // comes from the dining menu, menuItemId points at the MenuItem instead.
   itemName    String
+  // Optional link to the dining menu item (price is still snapshotted into
+  // priceAtAdd so later menu edits never rewrite old bills).
+  menuItemId  String?
+  menuItem    MenuItem? @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
   quantity    Int      @default(1)
   priceAtAdd  Decimal  @db.Decimal(10, 2)
   addedAt     DateTime @default(now())
 
   @@index([roomEntryId])
+  @@index([menuItemId])
+}
+
+// ── Advance bookings (admin-only; no public booking engine) ──────────
+
+model Reservation {
+  id          String            @id @default(cuid())
+  guestName   String
+  guestPhone  String?
+  numGuests   Int               @default(1)
+  roomTypeId  String
+  roomType    RoomType          @relation(fields: [roomTypeId], references: [id])
+  // Optional specific-room preference (null = any room of the type).
+  roomId      String?
+  room        Room?             @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  arrivalDate DateTime
+  nights      Int               @default(1)
+  status      ReservationStatus @default(BOOKED)
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  entries RoomEntry[]
+
+  @@index([roomTypeId])
+  @@index([status, arrivalDate])
 }
 
 // ── Invoicing ────────────────────────────────────────────────────
@@ -195,6 +243,8 @@ model MenuItem {
   category    String? // free-text grouping, e.g. "Mains", "Drinks"
   isAvailable Boolean @default(true)
   sortOrder   Int     @default(0)
+
+  charges RoomCharge[]
 
   @@index([isAvailable, sortOrder])
 }
