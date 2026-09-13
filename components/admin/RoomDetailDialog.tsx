@@ -48,13 +48,24 @@ type PrismaRoomEntry = {
   room: PrismaRoom;
 };
 
+/** One available dining-menu dish for the add-charge picker. */
+export type MenuPickItem = {
+  id: string;
+  name: string;
+  price: string;
+  category: string | null;
+};
+
+export const CUSTOM_CHARGE_VALUE = "__custom";
+
 type Props = {
   room: PrismaRoom;
   entry?: PrismaRoomEntry;
+  menuItems: MenuPickItem[];
   onClose: () => void;
 };
 
-export function RoomDetailDialog({ room, entry, onClose }: Props) {
+export function RoomDetailDialog({ room, entry, menuItems, onClose }: Props) {
   const isOccupied = room.status === "OCCUPIED" && !!entry;
   const isVacant = room.status === "AVAILABLE";
 
@@ -69,8 +80,26 @@ export function RoomDetailDialog({ room, entry, onClose }: Props) {
   const [itemName, setItemName] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [priceAtAdd, setPriceAtAdd] = useState(0);
+  // Menu picker is the default path; "__custom" reveals the free-text fields.
+  const [menuPick, setMenuPick] = useState(
+    menuItems[0]?.id ?? CUSTOM_CHARGE_VALUE,
+  );
 
   const [checkOutConfirm, setCheckOutConfirm] = useState(false);
+
+  const groupedMenu = useMemo(() => {
+    const groups = new Map<string, MenuPickItem[]>();
+    for (const item of menuItems) {
+      const key = item.category?.trim() || "Other";
+      const list = groups.get(key);
+      if (list) list.push(item);
+      else groups.set(key, [item]);
+    }
+    return [...groups.entries()];
+  }, [menuItems]);
+
+  const pickedMenuItem = menuItems.find((m) => m.id === menuPick) ?? null;
+  const isCustomCharge = menuPick === CUSTOM_CHARGE_VALUE || !pickedMenuItem;
 
   const totalCharges = useMemo(
     () =>
@@ -231,45 +260,100 @@ export function RoomDetailDialog({ room, entry, onClose }: Props) {
                 className="flex flex-col gap-3 border-t border-charcoal/10 pt-4"
               >
                 <h4 className="text-xs font-semibold uppercase tracking-wider text-charcoal/50">
-                  Add charge
+                  Add food / charge
                 </h4>
-                <Field label="Item name" htmlFor="itemName">
-                  <input
-                    id="itemName"
-                    name="itemName"
-                    type="text"
-                    required
-                    value={itemName}
-                    onChange={(e) => setItemName(e.target.value)}
+                <Field label="Dish" htmlFor="menuItemId">
+                  <select
+                    id="menuItemId"
+                    name="menuItemId"
+                    value={menuPick}
+                    onChange={(e) => setMenuPick(e.target.value)}
                     className={cn(inputClass, "h-12 text-base")}
-                    placeholder="e.g. Dal Bhat, Chai..."
-                  />
+                  >
+                    {groupedMenu.map(([category, items]) => (
+                      <optgroup key={category} label={category}>
+                        {items.map((item) => (
+                          <option key={item.id} value={item.id}>
+                            {item.name} — NPR {Number(item.price).toLocaleString()}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
+                    <option value={CUSTOM_CHARGE_VALUE}>
+                      Custom item (not on menu)…
+                    </option>
+                  </select>
                 </Field>
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label="Qty" htmlFor="quantity">
+                {isCustomCharge ? (
+                  <>
+                    <Field label="Item name" htmlFor="itemName">
+                      <input
+                        id="itemName"
+                        name="itemName"
+                        type="text"
+                        required
+                        value={itemName}
+                        onChange={(e) => setItemName(e.target.value)}
+                        className={cn(inputClass, "h-12 text-base")}
+                        placeholder="e.g. Packed lunch, Extra bed…"
+                      />
+                    </Field>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label="Qty" htmlFor="quantity">
+                        <input
+                          id="quantity"
+                          name="quantity"
+                          type="number"
+                          min={1}
+                          value={quantity}
+                          onChange={(e) => setQuantity(Number(e.target.value))}
+                          className={cn(inputClass, "h-12 text-base")}
+                        />
+                      </Field>
+                      <Field label="Price (NPR)" htmlFor="priceAtAdd">
+                        <input
+                          id="priceAtAdd"
+                          name="priceAtAdd"
+                          type="number"
+                          min={1}
+                          step={50}
+                          value={priceAtAdd}
+                          onChange={(e) => setPriceAtAdd(Number(e.target.value))}
+                          className={cn(inputClass, "h-12 text-base")}
+                        />
+                      </Field>
+                    </div>
+                  </>
+                ) : (
+                  <>
                     <input
-                      id="quantity"
-                      name="quantity"
-                      type="number"
-                      min={1}
-                      value={quantity}
-                      onChange={(e) => setQuantity(Number(e.target.value))}
-                      className={cn(inputClass, "h-12 text-base")}
-                    />
-                  </Field>
-                  <Field label="Price (NPR)" htmlFor="priceAtAdd">
-                    <input
-                      id="priceAtAdd"
+                      type="hidden"
                       name="priceAtAdd"
-                      type="number"
-                      min={1}
-                      step={50}
-                      value={priceAtAdd}
-                      onChange={(e) => setPriceAtAdd(Number(e.target.value))}
-                      className={cn(inputClass, "h-12 text-base")}
+                      value={Number(pickedMenuItem?.price) || 0}
                     />
-                  </Field>
-                </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label="Qty" htmlFor="quantity">
+                        <input
+                          id="quantity"
+                          name="quantity"
+                          type="number"
+                          min={1}
+                          value={quantity}
+                          onChange={(e) => setQuantity(Number(e.target.value))}
+                          className={cn(inputClass, "h-12 text-base")}
+                        />
+                      </Field>
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-charcoal/50">
+                          Price
+                        </p>
+                        <p className="mt-1 flex h-12 items-center rounded-lg bg-charcoal/5 px-3 text-base font-semibold text-charcoal">
+                          NPR {Number(pickedMenuItem?.price).toLocaleString()} each
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
                 <Button type="submit" variant="outline" size="md" className="w-full">
                   Add item
                 </Button>

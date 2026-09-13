@@ -121,12 +121,32 @@ export async function addRoomChargeAction(
     return { error: "Cannot add charges to a checked-out stay." };
   }
 
+  // Menu dish is the default path (name + price snapshotted from the
+  // MenuItem row); anything else falls back to the custom free-text item.
+  let itemName: string;
+  let priceAtAdd: number | string;
+  let menuItemId: string | null = null;
+  if (parsed.data.menuItemId && parsed.data.menuItemId !== "__custom") {
+    const menuItem = await db.menuItem.findUnique({
+      where: { id: parsed.data.menuItemId },
+    });
+    if (!menuItem) return { error: "That dish is no longer on the menu." };
+    itemName = menuItem.name;
+    priceAtAdd = menuItem.price.toString();
+    menuItemId = menuItem.id;
+  } else {
+    if (!parsed.data.itemName) return { error: "Enter an item name." };
+    itemName = parsed.data.itemName;
+    priceAtAdd = parsed.data.priceAtAdd;
+  }
+
   await db.roomCharge.create({
     data: {
       roomEntryId,
-      itemName: parsed.data.itemName,
+      itemName,
+      menuItemId,
       quantity: parsed.data.quantity,
-      priceAtAdd: parsed.data.priceAtAdd,
+      priceAtAdd,
     },
   });
 
@@ -202,22 +222,31 @@ const checkInSchema = z.object({
     .or(z.literal("")),
 });
 
-const roomChargeSchema = z.object({
-  itemName: z
-    .string()
-    .trim()
-    .min(1, "Enter an item name")
-    .max(200, "Item name too long"),
-  quantity: z.coerce
-    .number({ message: "Enter a quantity" })
-    .int("Whole number")
-    .min(1, "At least 1")
-    .max(999, "Max 999"),
-  priceAtAdd: z.coerce
-    .number({ message: "Enter a price" })
-    .positive("Price must be greater than 0")
-    .max(9_999_999, "Price too large"),
-});
+const roomChargeSchema = z
+  .object({
+    menuItemId: z.string().trim().max(100).optional().or(z.literal("")),
+    itemName: z.string().trim().max(200).optional().or(z.literal("")),
+    quantity: z.coerce
+      .number({ message: "Enter a quantity" })
+      .int("Whole number")
+      .min(1, "At least 1")
+      .max(999, "Max 999"),
+    priceAtAdd: z.coerce
+      .number({ message: "Enter a price" })
+      .positive("Price must be greater than 0")
+      .max(9_999_999, "Price too large"),
+  })
+  .refine(
+    (v) =>
+      (v.menuItemId !== undefined &&
+        v.menuItemId.length > 0 &&
+        v.menuItemId !== "__custom") ||
+      (v.itemName !== undefined && v.itemName.length > 0),
+    {
+      message: "Pick a dish or enter a custom item",
+      path: ["itemName"],
+    },
+  );
 
 const invoiceSettingsSchema = z.object({
   taxRate: z.coerce

@@ -19,11 +19,24 @@ const checkInSchema = z.object({
   notes: z.string().trim().max(1000).optional().or(z.literal("")),
 });
 
-const roomChargeSchema = z.object({
-  itemName: z.string().trim().min(1).max(200),
-  quantity: z.coerce.number().int().min(1).max(999),
-  priceAtAdd: z.coerce.number().positive().max(9_999_999),
-});
+const roomChargeSchema = z
+  .object({
+    menuItemId: z.string().trim().max(100).optional().or(z.literal("")),
+    itemName: z.string().trim().max(200).optional().or(z.literal("")),
+    quantity: z.coerce.number().int().min(1).max(999),
+    priceAtAdd: z.coerce.number().positive().max(9_999_999),
+  })
+  .refine(
+    (v) =>
+      (v.menuItemId !== undefined &&
+        v.menuItemId.length > 0 &&
+        v.menuItemId !== "__custom") ||
+      (v.itemName !== undefined && v.itemName.length > 0),
+    {
+      message: "Pick a dish or enter a custom item",
+      path: ["itemName"],
+    },
+  );
 
 const invoiceSettingsSchema = z.object({
   taxRate: z.coerce.number().min(0).max(100),
@@ -111,7 +124,8 @@ export async function addRoomChargeFormAction(
   formData: FormData,
 ): Promise<void> {
   const input = {
-    itemName: formData.get("itemName"),
+    menuItemId: formData.get("menuItemId") ?? "",
+    itemName: formData.get("itemName") ?? "",
     quantity: formData.get("quantity"),
     priceAtAdd: formData.get("priceAtAdd"),
   };
@@ -128,12 +142,37 @@ export async function addRoomChargeFormAction(
     redirect(`/admin/dashboard?room=${roomEntryId}&error=charge`);
   }
 
+  // Menu dish is the default path: name + price come from the MenuItem row
+  // (price snapshotted, so later menu edits never rewrite old bills).
+  // Anything else falls back to the custom free-text item.
+  let finalName: string;
+  let finalPrice: number | string;
+  let finalMenuItemId: string | null = null;
+  if (
+    parsed.data.menuItemId &&
+    parsed.data.menuItemId !== "__custom"
+  ) {
+    const menuItem = await db.menuItem.findUnique({
+      where: { id: parsed.data.menuItemId },
+    });
+    if (!menuItem) {
+      redirect(`/admin/dashboard?room=${roomEntryId}&error=charge`);
+    }
+    finalName = menuItem.name;
+    finalPrice = menuItem.price.toString();
+    finalMenuItemId = menuItem.id;
+  } else {
+    finalName = parsed.data.itemName as string;
+    finalPrice = parsed.data.priceAtAdd;
+  }
+
   await db.roomCharge.create({
     data: {
       roomEntryId,
-      itemName: parsed.data.itemName,
+      itemName: finalName,
+      menuItemId: finalMenuItemId,
       quantity: parsed.data.quantity,
-      priceAtAdd: parsed.data.priceAtAdd,
+      priceAtAdd: finalPrice,
     },
   });
 

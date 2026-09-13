@@ -5,7 +5,7 @@ import { BedDouble, DollarSign, Users } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { formatNPR } from "@/lib/format";
-import { RoomDetailDialog } from "@/components/admin/RoomDetailDialog";
+import { RoomDetailDialog, type MenuPickItem } from "@/components/admin/RoomDetailDialog";
 
 type PrismaRoom = {
   id: string;
@@ -50,9 +50,10 @@ type Props = {
   };
   rooms: PrismaRoom[];
   activeEntries: PrismaRoomEntry[];
+  menuItems: MenuPickItem[];
 };
 
-export function RoomBoard({ user, rooms, activeEntries }: Props) {
+export function RoomBoard({ user, rooms, activeEntries, menuItems }: Props) {
   const [selectedRoom, setSelectedRoom] = useState<PrismaRoom | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<PrismaRoomEntry | undefined>();
 
@@ -173,8 +174,10 @@ export function RoomBoard({ user, rooms, activeEntries }: Props) {
 
       {selectedRoom && (
         <RoomDetailDialog
+          key={selectedRoom.id}
           room={selectedRoom}
           entry={selectedEntry}
+          menuItems={menuItems}
           onClose={() => {
             setSelectedRoom(null);
             setSelectedEntry(undefined);

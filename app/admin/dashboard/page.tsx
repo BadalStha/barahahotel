@@ -13,7 +13,7 @@ export default async function AdminDashboardPage({
   const params = await searchParams;
   const pruned = params.pruned !== undefined ? Number(params.pruned) : undefined;
 
-  const [rooms, activeEntries] = await Promise.all([
+  const [rooms, activeEntries, menuItems] = await Promise.all([
     db.room.findMany({
       orderBy: { roomNumber: "asc" },
       include: { roomType: true },
@@ -26,6 +26,10 @@ export default async function AdminDashboardPage({
         invoice: true,
       },
       orderBy: { checkIn: "desc" },
+    }),
+    db.menuItem.findMany({
+      where: { isAvailable: true },
+      orderBy: [{ category: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
     }),
   ]);
 
@@ -69,12 +73,24 @@ export default async function AdminDashboardPage({
     },
   })) as unknown as Parameters<typeof RoomBoard>[0]["activeEntries"];
 
+  const mappedMenuItems = menuItems.map((item) => ({
+    id: item.id,
+    name: item.name,
+    price: item.price.toString(),
+    category: item.category,
+  }));
+
   return (
     <div className="flex flex-col gap-6">
       <HistoryToolbar
         pruned={pruned !== undefined && Number.isFinite(pruned) ? pruned : undefined}
       />
-      <RoomBoard user={user} rooms={mappedRooms} activeEntries={mappedEntries} />
+      <RoomBoard
+        user={user}
+        rooms={mappedRooms}
+        activeEntries={mappedEntries}
+        menuItems={mappedMenuItems}
+      />
     </div>
   );
 }
