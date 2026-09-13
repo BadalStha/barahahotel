@@ -5,6 +5,8 @@ import { Header } from "@/components/public/Header";
 import { getSetting, getSiteSettings } from "@/lib/settings";
 import { SITE_URL } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -32,9 +34,8 @@ export default async function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // The layout is rendered as part of each ISR page (build-time prerender
-  // + hourly revalidation); admin edits reach it immediately via
-  // revalidatePublicSite() in the server actions.
+  // Public content is read at request time so deployments do not require
+  // database access during static generation.
   const settings = await getSiteSettings();
   const str = (key: string, fallback = "") => getSetting(settings, key, fallback);
 

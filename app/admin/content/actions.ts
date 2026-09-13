@@ -7,6 +7,7 @@ import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { revalidatePublicSite } from "@/lib/revalidate";
 import { setSiteSettings } from "@/lib/settings";
+import { requireAdmin } from "@/lib/admin-auth";
 import {
   pageSchema,
   siteSettingsSchema,
@@ -82,6 +83,7 @@ const SETTING_KEY_MAP: Record<string, string> = {
 export async function updateSiteSettingsAction(
   input: SiteSettingsInput,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const parsed = siteSettingsSchema.safeParse(input);
   if (!parsed.success) return { error: "Please fix the highlighted fields." };
 
@@ -100,6 +102,7 @@ export async function updateSiteSettingsAction(
 // ── Pages ────────────────────────────────────────────────────────
 
 export async function createPageAction(input: PageInput): Promise<ActionResult> {
+  await requireAdmin();
   const parsed = pageSchema.safeParse(input);
   if (!parsed.success) return { error: "Please fix the highlighted fields." };
 
@@ -128,6 +131,7 @@ export async function updatePageAction(
   slug: string,
   input: PageInput,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const parsed = pageSchema.safeParse(input);
   if (!parsed.success) return { error: "Please fix the highlighted fields." };
 
@@ -159,6 +163,7 @@ export async function updatePageAction(
 }
 
 export async function deletePageAction(slug: string): Promise<void> {
+  await requireAdmin();
   const page = await db.page.findUnique({ where: { slug }, select: { id: true } });
   if (!page) throw new Error("Page not found.");
 

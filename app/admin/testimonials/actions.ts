@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { db } from "@/lib/db";
 import { revalidatePublicSite } from "@/lib/revalidate";
+import { requireAdmin } from "@/lib/admin-auth";
 import {
   testimonialSchema,
   type TestimonialInput,
@@ -15,6 +16,7 @@ export type ActionResult = { error?: string };
 export async function createTestimonialAction(
   input: TestimonialInput,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const parsed = testimonialSchema.safeParse(input);
   if (!parsed.success) return { error: "Please fix the highlighted fields." };
 
@@ -35,6 +37,7 @@ export async function updateTestimonialAction(
   id: string,
   input: TestimonialInput,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const parsed = testimonialSchema.safeParse(input);
   if (!parsed.success) return { error: "Please fix the highlighted fields." };
 
@@ -62,6 +65,7 @@ export async function toggleTestimonialPublishedAction(
   id: string,
   isPublished: boolean,
 ): Promise<ActionResult> {
+  await requireAdmin();
   const existing = await db.testimonial.findUnique({
     where: { id },
     select: { id: true },
@@ -75,6 +79,7 @@ export async function toggleTestimonialPublishedAction(
 }
 
 export async function deleteTestimonialAction(id: string): Promise<void> {
+  await requireAdmin();
   const existing = await db.testimonial.findUnique({
     where: { id },
     select: { id: true },

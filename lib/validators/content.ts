@@ -108,8 +108,17 @@ export type PageValues = z.output<typeof pageSchema>;
 
 // ── Gallery ──────────────────────────────────────────────────────
 
+const safeImageUrl = z.string().trim().url("Enter a valid image URL").max(500).refine((value) => {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}, "Image URLs must use HTTPS");
+
 export const galleryImageSchema = z.object({
-  url: z.string().trim().min(1, "Image URL is required").max(500),
+  url: safeImageUrl,
   altText: optionalString(200),
   category: optionalString(50),
 });
