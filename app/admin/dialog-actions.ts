@@ -84,6 +84,9 @@ export async function checkInFormAction(formData: FormData): Promise<void> {
     data: { status: "OCCUPIED" },
   });
 
+  // Create the opening invoice right away so the stay always has a bill.
+  await generateInvoice(entry.id);
+
   revalidatePath("/admin/dashboard");
   redirect(`/admin/dashboard?room=${entry.id}`);
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
+import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import { formatNPR } from "@/lib/format";
@@ -111,6 +112,16 @@ export function RoomDetailDialog({ room, entry, menuItems, onClose }: Props) {
         : 0,
     [entry],
   );
+
+  // Calendar-day nights, mirroring lib/invoice.ts (used for the bill label).
+  const nights = useMemo(() => {
+    if (!entry) return 1;
+    const start = new Date(entry.checkIn);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(entry.checkOut ?? new Date());
+    end.setHours(0, 0, 0, 0);
+    return Math.max(1, Math.round((end.getTime() - start.getTime()) / 86400000));
+  }, [entry]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -227,11 +238,11 @@ export function RoomDetailDialog({ room, entry, menuItems, onClose }: Props) {
 
               <div className="border-t border-charcoal/10 pt-4">
                 <h4 className="text-xs font-semibold uppercase tracking-wider text-charcoal/50">
-                  Charges
+                  Food &amp; beverage
                 </h4>
                 {entry.charges.length === 0 ? (
                   <p className="mt-2 text-sm text-charcoal/50">
-                    No charges added yet.
+                    No food added yet.
                   </p>
                 ) : (
                   <ul className="mt-2 divide-y divide-charcoal/5">
@@ -251,7 +262,7 @@ export function RoomDetailDialog({ room, entry, menuItems, onClose }: Props) {
                   </ul>
                 )}
                 <p className="mt-2 text-sm font-semibold text-charcoal">
-                  Charges total: {formatNPR(totalCharges)}
+                  Food total: {formatNPR(totalCharges)}
                 </p>
               </div>
 
@@ -358,6 +369,64 @@ export function RoomDetailDialog({ room, entry, menuItems, onClose }: Props) {
                   Add item
                 </Button>
               </form>
+
+              {entry.invoice ? (
+                <div className="flex flex-col gap-2 border-t border-charcoal/10 pt-4">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-charcoal/50">
+                    Bill
+                  </h4>
+                  <dl className="flex flex-col gap-1.5 text-sm">
+                    <div className="flex items-center justify-between">
+                      <dt className="text-charcoal/70">
+                        Room — {formatNPR(Number(entry.ratePerNight))} ×{" "}
+                        {nights} night{nights === 1 ? "" : "s"}
+                      </dt>
+                      <dd className="font-medium text-charcoal">
+                        {formatNPR(Number(entry.invoice.roomTotal))}
+                      </dd>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <dt className="text-charcoal/70">Food &amp; beverage</dt>
+                      <dd className="font-medium text-charcoal">
+                        {formatNPR(Number(entry.invoice.chargeTotal))}
+                      </dd>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <dt className="text-charcoal/70">Tax</dt>
+                      <dd className="font-medium text-charcoal">
+                        {formatNPR(Number(entry.invoice.taxAmount))}
+                      </dd>
+                    </div>
+                    {Number(entry.invoice.discountAmount) > 0 ? (
+                      <div className="flex items-center justify-between">
+                        <dt className="text-charcoal/70">Discount</dt>
+                        <dd className="font-medium text-pine">
+                          −{formatNPR(Number(entry.invoice.discountAmount))}
+                        </dd>
+                      </div>
+                    ) : null}
+                    <div className="mt-1 flex items-center justify-between border-t border-charcoal/10 pt-2">
+                      <dt className="font-semibold text-charcoal">
+                        Grand total
+                      </dt>
+                      <dd className="font-display text-xl text-charcoal">
+                        {formatNPR(Number(entry.invoice.grandTotal))}
+                      </dd>
+                    </div>
+                  </dl>
+                  <div className="flex items-center justify-between">
+                    <span className="rounded-full bg-charcoal/10 px-2.5 py-0.5 text-xs font-semibold text-charcoal/70">
+                      {entry.invoice.paymentStatus}
+                    </span>
+                    <Link
+                      href={`/admin/invoices/${entry.id}`}
+                      className="text-sm font-semibold text-pine underline-offset-2 hover:underline"
+                    >
+                      Print invoice
+                    </Link>
+                  </div>
+                </div>
+              ) : null}
 
               <div className="border-t border-charcoal/10 pt-4">
                 {checkOutConfirm ? (

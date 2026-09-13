@@ -53,6 +53,9 @@ export async function checkInAction(input: unknown): Promise<ActionResult> {
     data: { status: "OCCUPIED" },
   });
 
+  // Create the opening invoice right away so the stay always has a bill.
+  await generateInvoice(entry.id);
+
   void appendRoomEntryRow({
     date: new Date().toISOString().split("T")[0],
     roomNumber: entry.room.roomNumber,
